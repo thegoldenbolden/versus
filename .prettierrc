@@ -1,0 +1,7 @@
+{
+ "useTabs": false,
+ "arrowParens": "always",
+ "singleAttributePerLine": false,
+ "tabWidth": 1,
+ "printWidth": 90
+}

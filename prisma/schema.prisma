@@ -1,0 +1,161 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("userId")
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id              String             @id @unique @default(cuid())
+  name            String?            
+  image           String?
+  email           String?            @unique
+  emailVerified   DateTime?          @map("emailVerified")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  accounts        Account[]
+  sessions        Session[]
+  likedComments   CommentLike[]
+  likedPrompts    PromptLike[]
+  votedPrompts    PromptOptionVote[]
+  createdPrompts  Prompt[]
+  createdComments Comment[]
+
+  @@map(name: "users")
+}
+
+model Prompt {
+  id          Int            @id @unique @default(autoincrement())
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  title       String
+  options     PromptOption[]
+  description String?
+  likes       PromptLike[]
+  status      PromptStatus
+  comments    Comment[]
+  tags        PromptTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, authorId])
+  @@map(name: "prompts")
+}
+
+model PromptOption {
+  id       String             @unique @default(cuid())
+  text     String
+  votes    PromptOptionVote[]
+  prompt   Prompt             @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  promptId Int
+
+  @@unique([promptId, text])
+  @@unique([promptId, id])
+		@@map(name: "options")
+}
+
+model PromptOptionVote {
+  option   PromptOption @relation(fields: [optionId, promptId], references: [id, promptId])
+  optionId String
+  promptId Int
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+
+  @@unique([userId, promptId])
+		@@map(name: "votes")
+}
+
+model Tag {
+  id      Int         @id @default(autoincrement())
+  name    String
+  prompts PromptTag[]
+		@@map(name: "tags")
+}
+
+model PromptTag {
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  promptId Int
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId    Int
+
+  @@id([promptId, tagId])
+		@@map(name: "promptTags")
+}
+
+model PromptLike {
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  promptId Int
+
+  @@unique([promptId, userId])
+		@@map(name: "promptLikes")
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  message   String
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  prompt    Prompt        @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  promptId  Int
+  parentId  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  likes     CommentLike[]
+  replies   Comment[]     @relation("comment_replies")
+  parent    Comment?      @relation("comment_replies", fields: [parentId], references: [id])
+
+  @@unique([authorId, id])
+  @@map(name: "comments")
+}
+
+model CommentLike {
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+
+  @@unique([commentId, userId])
+		@@map(name: "commentLikes")
+}
+
+enum PromptStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
