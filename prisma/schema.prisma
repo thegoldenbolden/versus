@@ -46,6 +46,7 @@ model User {
   emailVerified   DateTime?          @map("emailVerified")
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
+		roles           Role             @default(USER)
   accounts        Account[]
   sessions        Session[]
   likedComments   CommentLike[]
@@ -55,6 +56,12 @@ model User {
   createdComments Comment[]
 
   @@map(name: "users")
+}
+
+enum Role {
+	ADMIN 
+	USER
+	MODERATOR
 }
 
 model Prompt {
@@ -67,7 +74,7 @@ model Prompt {
   likes       PromptLike[]
   status      PromptStatus
   comments    Comment[]
-  tags        PromptTag[]
+  tags        String[]      @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,6 +82,7 @@ model Prompt {
   @@unique([id, authorId])
   @@map(name: "prompts")
 }
+
 
 model PromptOption {
   id       String             @unique @default(cuid())
@@ -89,7 +97,7 @@ model PromptOption {
 }
 
 model PromptOptionVote {
-  option   PromptOption @relation(fields: [optionId, promptId], references: [id, promptId])
+  option   PromptOption @relation(fields: [optionId, promptId], references: [id, promptId], onDelete: Cascade)
   optionId String
   promptId Int
   user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -97,23 +105,6 @@ model PromptOptionVote {
 
   @@unique([userId, promptId])
 		@@map(name: "votes")
-}
-
-model Tag {
-  id      Int         @id @default(autoincrement())
-  name    String
-  prompts PromptTag[]
-		@@map(name: "tags")
-}
-
-model PromptTag {
-  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
-  promptId Int
-  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  tagId    Int
-
-  @@id([promptId, tagId])
-		@@map(name: "promptTags")
 }
 
 model PromptLike {
