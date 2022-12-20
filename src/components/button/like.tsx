@@ -1,16 +1,13 @@
 import { useSession } from "next-auth/react";
 import { useState, Fragment } from "react";
-import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { makePostRequest, makeRequest } from "@lib/make-requests";
-import { IClose, ILike } from "@components/icons";
+import { ILike } from "@components/icons";
 import { BASE_URL } from "@lib/constants";
-import { bebas } from "@lib/fonts";
-import log from "@lib/log";
 import { validatePostLike } from "@lib/versus/validate";
 import useRequest from "@hooks/useRequest";
-import { KeyedMutator } from "swr";
+import { MutateData } from "types";
 
 // prettier-ignore
 type LikeProps = { 
@@ -19,8 +16,7 @@ type LikeProps = {
 	cid?: string; 
 	size?: string; 
 	setLikes?: React.Dispatch<React.SetStateAction<number>>;
-	mutate?: KeyedMutator<any[]>
-};
+} & Pick<MutateData<Versus.Prompt>, "mutate" | "isRefreshing">
 
 // prettier-ignore
 const likeClassName = "fill-secondary text-secondary hover:text-dark hover:dark:text-light focus:dark:text-light focus:text-dark hover:fill-transparent focus:fill-transparent";
@@ -29,8 +25,9 @@ const unlikeClassName = "hover:fill-secondary hover:text-secondary focus:fill-se
 
 const Like = (props: LikeProps) => {
  const { data: session } = useSession();
- const [like, setLike] = useState(props.userLikes);
+ const [userLikes, setUserLikes] = useState(props.userLikes);
  const [modal, setModal] = useState(false);
+
  const request = useRequest(async () => {
   if (!session?.user) {
    setModal(true);
@@ -39,15 +36,15 @@ const Like = (props: LikeProps) => {
 
   if (request.submitting) return;
 
-  const previous = like;
   const { pid, cid } = props;
   // prettier-ignore
-  const url = `${BASE_URL}/api/likes?pid=${pid}` + (cid ? `&type=comment&cid=${cid}` : `&type=prompt`);
+  let url = `${BASE_URL}/api/prompts/${pid}`;
+  url += cid ? `/comments/${cid}/likes` : "/likes";
 
   // If an error happens reset to initial state and continue throwing the error
   // If a user already likes the prompt or comment the delete the like
-  if (like) {
-   setLike(false);
+  if (userLikes) {
+   setUserLikes(false);
    props.setLikes && props.setLikes((p) => p - 1);
    await makeRequest(url, "DELETE");
    props.mutate && props.mutate();
@@ -61,14 +58,18 @@ const Like = (props: LikeProps) => {
    type: cid ? "comment" : "prompt",
   });
   // Create like
-  setLike(true);
+  setUserLikes(true);
   props.setLikes && props.setLikes((p) => p + 1);
   await makePostRequest(url, { pid, cid, type: cid ? "comment" : "prompt" });
   props.mutate && props.mutate();
  });
 
  const closeModal = () => setModal(false);
- const handleLike = async () => request.trigger();
+ const handleLike = async () => {
+  if (!props.isRefreshing) {
+   request.trigger();
+  }
+ };
 
  return (
   <>
@@ -80,7 +81,9 @@ const Like = (props: LikeProps) => {
     className="flex items-center justify-center gap-2"
    >
     <ILike
-     className={`${props.size ?? "w-8 h-8"} ${like ? likeClassName : unlikeClassName}`}
+     className={`${props.size ?? "w-8 h-8"} ${
+      userLikes ? likeClassName : unlikeClassName
+     }`}
     />
    </button>
    <Transition appear show={modal} as={Fragment}>
