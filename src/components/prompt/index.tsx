@@ -1,56 +1,32 @@
 import { useState } from "react";
-import Link from "next/link";
 
 import { formatDate, formatNumber, formatPlural } from "@lib/format";
 import Description from "@prompt/description";
-import Dropdown from "@components/dropdown";
 import Like from "@components/button/like";
-import Options from "@prompt/options";
-import Image from "@components/image";
-import Tags from "@prompt/tags";
-import { KeyedMutator } from "swr";
+import Options from "./options";
+import Tags from "./tags";
+import Header from "./header";
+import { MutateData } from "types";
 
-const Prompt = ({
- prompt,
- mutate,
-}: {
- prompt: Versus.Prompt;
- mutate?: KeyedMutator<any[]>;
-}) => {
- const [likes, setLikes] = useState(prompt.likes);
+const Prompt = (props: MutateData<Versus.Prompt>) => {
+ const [likes, setLikes] = useState(props.data.likes);
 
  return (
   <div className="prompt">
-   <div className="header">
-    <Image
-     height={40}
-     width={40}
-     className="rounded-md"
-     src={prompt.author.image ?? ""}
-     alt="avatar"
-    />
-    <div className="flex flex-col text-sm iline-flex grow">
-     <span className="font-bold truncate">{prompt.author.name}</span>
-     <Link
-      href={`/${prompt.number}`}
-      className="truncate opacity-75 hover:opacity-100 focus:opacity-100 hover:underline focus:underline"
-     >
-      {prompt.title}
-     </Link>
-    </div>
-    {prompt.userCanDelete && <Dropdown route={`/api/prompts/${prompt.number}`} />}
-   </div>
-   <Options
-    options={prompt.options}
-    userCanVote={prompt.userCanVote}
-    pid={prompt.number}
+   <Header
+    data={props.data}
+    mutate={props.mutate}
+    isRefreshing={props.isRefreshing}
+    reload={props.reload}
    />
+   <Options data={props.data} mutate={props.mutate} />
    <div className="actions">
     <Like
-     mutate={mutate}
+     isRefreshing={props.isRefreshing}
+     mutate={props.mutate}
      setLikes={setLikes}
-     userLikes={prompt.userLikes}
-     pid={`${prompt.number}`}
+     userLikes={props.data.userLikes}
+     pid={`${props.data.number}`}
     />
    </div>
    <div className="details">
@@ -60,13 +36,13 @@ const Prompt = ({
       {formatPlural("like", likes)}
      </span>
     </div>
-    <div className="description">
-     <span>{prompt.author.name}</span>
-     <Description description={prompt.description} />
+    <div className="description break-words">
+     <span>{props.data.author.name}</span>
+     <Description description={props.data.description} />
     </div>
-    <Tags tags={prompt.tags} />
+    <Tags tags={props.data.tags} />
     <span className="text-xs font-bold opacity-50">
-     {formatDate(prompt.createdAt)} ago
+     {formatDate(props.data.createdAt)} ago
     </span>
    </div>
   </div>
