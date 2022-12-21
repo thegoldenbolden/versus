@@ -88,6 +88,11 @@
     color: theme("colors.light");
    }
 
+   &.twitter {
+    background: theme("colors.twitter");
+    color: theme("colors.light")
+   }
+
    &:hover,
    &:focus {
     filter: brightness(1.2);
@@ -216,6 +221,24 @@
   @media (min-width: theme("screens.sm")) {
    max-width: 480px;
    @apply shadow-default rounded-md;
+  }
+ }
+
+ .account-header {
+  position: relative;
+
+  &::after {
+   @apply bg-dark/25 absolute top-0 w-full;
+   position: absolute;
+   height: 50%;
+   width: 100%;
+   content: "";
+   top: 0;
+   z-index: 1;
+
+   @include dark-mode() {
+    @apply bg-light/25;
+   }
   }
  }
 
