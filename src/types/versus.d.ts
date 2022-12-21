@@ -15,10 +15,11 @@ declare namespace Versus {
   description: string | null;
   likes: number;
   comments: number;
-		tags: Tag[],
+		tags: number[],
   userCanDelete: boolean;
   userCanVote: boolean;
 		userLikes: boolean;
+		status: "APPROVED" | "PENDING" | "REJECTED";
   options: { id: string; text: string; votes: number }[];
  };
 
@@ -31,9 +32,7 @@ declare namespace Versus {
 		parent: Author & Omit<Comment, "userCanDelete" | "userLikes" | "parent">
 	};
 
-	export type Tag = {
-		id: string | number;
-		name: (
+	export type Tag = (
 			'Anime & Manga' | "Art & Music" | 
 			"Fantasy" | "Fashion" | 'Food & Drink' | 
 			"Games" | 
@@ -43,9 +42,7 @@ declare namespace Versus {
 			'Pop Culture' | 
 			"Sports" |	"Suffering" |  
 			"TV Shows & Movies" | "Technology" | "Travel" |
-			"Violence"	
-		)
-	};
+			"Violence");
 
 	interface ArgsBase {
 		pid: string;
@@ -64,7 +61,7 @@ declare namespace Versus {
 	interface PostPromptArgs extends Omit<ArgsBase, "pid"> {
 		title: string;
 		description: string;
-		tags: Tag[];
+		tags: number[]
 		options: string[];
 	};
 
@@ -83,11 +80,12 @@ declare namespace Versus {
 		uid?: string;
 		take: string | number;
 		status?: "APPROVED" | "REJECTED" | "PENDING",
-  title?: string;
+  q?: string; // Can be title, or options
   date?: string;
-  tags?: Tag[];
+  tags?: string;
 		description?: boolean;
   cursor?: string | number;
+		recent?: "asc" | "desc"
 	}
 
 
