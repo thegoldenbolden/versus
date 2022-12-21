@@ -20,7 +20,7 @@ const App: React.FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
  const getLayout = Component.getLayout || ((page: React.ReactElement) => page);
 
  return (
-  <div className={`${roboto.variable} font-sans`}>
+  <div className={`${roboto.variable} ${bebas.variable} font-display font-sans`}>
    <ErrorBoundary>
     <SessionProvider session={pageProps.session}>
      <SWRConfig

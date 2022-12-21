@@ -5,7 +5,7 @@ export default function Document() {
  return (
   <Html lang="en">
    <Head />
-   <body className={`${bebas.variable} font-display`}>
+   <body>
     <Main />
     <NextScript />
     <div id="modal-root"></div>
