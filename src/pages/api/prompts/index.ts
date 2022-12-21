@@ -1,4 +1,4 @@
-import { getPrompts, getTotalPrompts, postPrompt } from "@lib/versus/prompt";
+import { getPrompts, postPrompt } from "@lib/versus/prompt";
 import withApiHandler from "@lib/with-api-handler";
 import { MAX_PROMPTS_PER } from "@lib/constants";
 import CustomError from "@lib/error";
@@ -9,17 +9,16 @@ export default withApiHandler(async (req, pid, uid) => {
   default:
    throw new CustomError(405);
   case "GET":
-   const prompts = await getPrompts({ take: MAX_PROMPTS_PER, ...req.query, uid });
-   const total = await getTotalPrompts();
-   const back = prompts?.[0]?.number ?? null;
-   const next = prompts?.[prompts.length - 1]?.number ?? null;
+   const take = (req.query.take ?? MAX_PROMPTS_PER).toString();
+   const prompts = await getPrompts({ ...req.query, take, uid }).catch((e) => []);
+   const next = prompts[prompts.length - 1]?.number;
+   // Items per page
+   const per = parseInt(take);
 
    return {
     prompts,
     pagination: {
-     count: total,
-     back: back && back === 1 ? null : back,
-     next: next && total === next ? null : next + 1,
+     next: prompts.length < per ? null : next + 1,
     },
    };
   case "POST":
