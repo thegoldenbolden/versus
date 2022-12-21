@@ -1,9 +1,10 @@
-import { Prisma, PromptLike, PromptOptionVote } from "@prisma/client";
+import { Prisma, PromptLike, PromptOptionVote, PromptStatus, Role } from "@prisma/client";
 
 // prettier-ignore
 import { validateDeletePrompt, validatePostPrompt, validatePromptId, validateTags } from "@lib/versus/validate";
 import prisma from "@lib/prisma";
 import log from "@lib/log";
+import { MAX_PROMPTS_PER } from "@lib/constants";
 
 // prettier-ignore
 type Reacted = Prisma.PromptLikeFindManyArgs | Prisma.PromptOptionVoteFindManyArgs | undefined;
@@ -13,10 +14,11 @@ type P = {
  title: string;
  description: string | null;
  createdAt: Date;
+ status: PromptStatus;
  likes: PromptLike[];
- tags: { tag: { id: number; name: string } }[];
+ tags: number[];
  _count: { likes: number; comments: number };
- author: { id: string; name: string | null; image: string | null };
+ author: { id: string; name: string | null; image: string | null; role: Role };
  options: {
   _count: { votes: number };
   id: string;
@@ -44,11 +46,7 @@ export const postPrompt = async (data: Versus.PostPromptArgs) => {
     description: request.description ?? undefined,
     title: request.title,
     status: "PENDING",
-    tags: {
-     create: request.tags.map((tag) => ({
-      tag: { connect: { id: tag.id as number } },
-     })),
-    },
+    tags: { set: request.tags },
     options: {
      createMany: {
       skipDuplicates: true,
@@ -75,47 +73,62 @@ export const deletePrompt = async (pid: string, uid: string) => {
 };
 
 // TODO: expand search
+// TODO: fix tag typing / validateTag
 export const getPrompts: Versus.GetManyPrompts = async (args) => {
- const { tags, title, date, uid, status } = args;
- args.take = parseInt(args.take as string) || 15;
- args.cursor = parseInt(args.cursor as string) || undefined;
+ const { tags, q, date, uid } = args;
+ args.take = parseInt(args.take as string) || MAX_PROMPTS_PER;
+ args.cursor = parseInt(args.cursor as string) || 1;
 
- const where: Prisma.PromptFindManyArgs["where"] = {};
- where.status = status || "APPROVED";
+ // Ignore versus that have been rejected.
+ const where: Prisma.PromptFindManyArgs["where"] = {
+  status: { not: "REJECTED" },
+ };
 
- if (title) where.title = { contains: title.replaceAll("+", " "), mode: "insensitive" };
- if (date) where.createdAt = { lt: new Date(date) };
- if (tags) args.tags = validateTags(tags);
+ const OR = [];
+ if (q) {
+  OR.push(
+   { title: { contains: q, mode: "insensitive" } },
+   { options: { some: { text: { contains: q, mode: "insensitive" } } } }
+  );
+ }
 
- where.id = args.cursor ? { lt: args.take + args.cursor, gte: args.cursor } : undefined;
+ if (tags) {
+  const t = tags.split(",").map((tag) => parseInt(tag));
+  args.tags = validateTags(t) as any;
+  OR.push(...t.map((t) => ({ tags: { has: t } })));
+ }
+
+ if (OR.length > 0) {
+  where.OR = OR as any;
+ }
 
  // prettier-ignore
+ // Find all prompts the user has voted on
  let reacted: Prisma.PromptLikeFindManyArgs | Prisma.PromptOptionVoteFindManyArgs | undefined;
 
- if (uid && args.cursor) {
+ if (uid) {
   reacted = {
    select: { userId: true },
-   where: {
-    userId: uid,
-    promptId: { lt: args.take + args.cursor, gte: args.cursor },
-   },
+   where: { userId: uid },
   };
  }
 
  const prompts = await prisma.prompt.findMany({
   where,
-  cursor: args.cursor ? { id: args.cursor } : undefined,
   take: args.take,
+  cursor: { id: args.cursor },
   select: {
    id: true,
    title: true,
    createdAt: true,
    description: true,
+   status: true,
+   tags: true,
    likes: reacted as Prisma.PromptLikeFindManyArgs | undefined,
-   tags: { select: { tag: { select: { id: true, name: true } } } },
-   author: { select: { id: true, name: true, image: true } },
+   author: { select: { id: true, name: true, image: true, role: true } },
    _count: { select: { comments: true, likes: true } },
    options: {
+    orderBy: { id: "asc" },
     select: {
      text: true,
      id: true,
@@ -127,8 +140,7 @@ export const getPrompts: Versus.GetManyPrompts = async (args) => {
  });
 
  if (!prompts) return [];
- prompts[0].options[0].votes;
- return prompts.map((prompt) => createResponse(prompt, reacted));
+ return prompts.map((prompt) => createResponse(prompt, reacted, args.uid));
 };
 
 export async function getPrompt(_pid: string, uid: string) {
@@ -148,13 +160,15 @@ export async function getPrompt(_pid: string, uid: string) {
   select: {
    id: true,
    title: true,
+   status: true,
    createdAt: true,
    description: true,
+   tags: true,
    likes: reacted as Prisma.PromptLikeFindManyArgs | undefined,
-   tags: { select: { tag: { select: { id: true, name: true } } } },
-   author: { select: { id: true, name: true, image: true } },
+   author: { select: { id: true, name: true, image: true, role: true } },
    _count: { select: { comments: true, likes: true } },
    options: {
+    orderBy: { id: "asc" },
     select: {
      text: true,
      id: true,
@@ -166,16 +180,17 @@ export async function getPrompt(_pid: string, uid: string) {
  });
 
  if (!prompt) return null;
- return createResponse(prompt, reacted);
+ return createResponse(prompt, reacted, uid);
 }
 
-function createResponse(prompt: P, reacted: Reacted, uid?: string) {
+function createResponse(prompt: P, reacted: Reacted, uid: string | undefined) {
  const { author, createdAt, _count, options } = prompt;
  return {
   number: prompt.id,
   title: prompt.title,
+  status: prompt.status,
   description: prompt.description ?? null,
-  tags: prompt.tags.map(({ tag: { id, name } }) => ({ id, name })) as Versus.Tag[],
+  tags: prompt.tags,
   createdAt: createdAt.toISOString(),
   likes: _count.likes,
   comments: _count.comments,

@@ -9,7 +9,7 @@ export function validateId(id: string, type: string) {
 export function validatePromptId(_pid: string) {
  const pid = parseInt(_pid) || 0;
  if (isNaN(pid) || pid === 0) {
-  throw new CustomError(404, "Invalid prompt id provider", "PromptIdError");
+  throw new CustomError(400, "Invalid prompt id", "PromptIdError");
  }
  return pid;
 }
@@ -26,7 +26,7 @@ export function validatePostLike(data: Versus.PostLikeArgs) {
  const { pid, uid, cid, type } = data;
 
  if (!type || (type !== "comment" && type !== "prompt")) {
-  throw new CustomError(400, "Invalid type provider", "LikeTypeError");
+  throw new CustomError(400, "Invalid type", "LikeTypeError");
  }
 
  const validated: any = {};
@@ -42,33 +42,47 @@ export function validatePostLike(data: Versus.PostLikeArgs) {
  return validated;
 }
 
-export function validateTags(tags: Versus.Tag[]) {
+export function validateTags(tags: number[]) {
  tags.forEach((tag) => {
-  if (!TAGS.find((t) => t.id === tag.id)) {
-   throw new CustomError(400, "Invalid tag provider", "VersusTagError");
+  if (!TAGS.find((t) => t.id.toString() === tag.toString())) {
+   throw new CustomError(400, "Invalid tag", "VersusTagError");
   }
  });
 
  return tags;
 }
 
-export function validateMessage(message: string, min: number, max: number) {
- if (message.length < min || message.length > max) {
-  throw new CustomError(
-   400,
-   `Must be between ${min}-${max} characters`,
-   "MessageLengthError"
-  );
- }
+type Inputs = "title" | "option" | "description";
+export function validateMessage(input: Inputs, message: string) {
+ switch (input) {
+  default:
+   throw new CustomError(400, "Invalid validate message input");
+  case "title":
+  case "option":
+   if (!/^[\w\s]{1,128}$/.test(message)) {
+    throw new CustomError(
+     400,
+     "Text must not be longer than 128 characters and consist only of alphanumeric characters"
+    );
+   }
+   return message;
+  case "description":
+   if (!/^[\w\s.,!?"']{1,1024}$/.test(message)) {
+    throw new CustomError(
+     400,
+     "Text must not be longer than 1024 characterss and consist only of alphanumeric characters, or punctuation"
+    );
+   }
 
- return message;
+   return message;
+ }
 }
 
 export function validateOptions(options: string[]) {
  const o = new Set(options);
  // prettier-ignore
  if (o.size !== 2) throw new CustomError(400, "Two distinct options are required", "DistinctOptionError");
- o.forEach((o) => validateMessage(o, 3, 100));
+ o.forEach((o) => validateMessage("option", o));
  return options;
 }
 
@@ -80,8 +94,9 @@ export function validatePostPrompt(data: Versus.PostPromptArgs) {
  const { uid, title, description, tags, options } = data;
  return {
   uid: validateId(uid, "user"),
-  title: validateMessage(title, 3, 128),
-  description: description.length > 0 ? validateMessage(description, 3, 1024) : undefined,
+  title: validateMessage("title", title),
+  description:
+   description?.length > 0 ? validateMessage("description", description) : undefined,
   tags: validateTags(tags),
   options: validateOptions(options),
  };
@@ -89,12 +104,11 @@ export function validatePostPrompt(data: Versus.PostPromptArgs) {
 
 export function validatePostComment(data: Versus.PostCommentArgs) {
  const { pid, uid, message, root } = data;
-
  return {
   root,
   pid: validatePromptId(pid),
   uid: validateId(uid, "user"),
-  message: validateMessage(message, 2, 1024),
+  message: validateMessage("description", message),
  };
 }
 
