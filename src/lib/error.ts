@@ -10,12 +10,17 @@ export default class CustomError extends Error {
  }
 
  getMessage() {
+  if (this.message) return this.message;
+
   switch (this.status) {
+   default:
+    this.message = "An error occurred";
+    break;
    case 400:
     this.message = "Bad Request";
     break;
    case 401:
-    this.message = "Unauthorized";
+    this.message = "Not Allowed";
     break;
    case 405:
     this.message = "Method Not Allowed";
@@ -25,7 +30,6 @@ export default class CustomError extends Error {
     break;
   }
 
-  if (!this.message) this.message = "An error occurred";
   return this.message;
  }
 
