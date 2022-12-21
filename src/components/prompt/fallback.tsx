@@ -1,26 +1,22 @@
-import { IComments, ILike } from "@components/icons";
 import Skeleton from "@components/skeleton";
 
 const FallbackPrompt = () => {
  return (
-  <div className="flex flex-col w-full min-h-[480px] justify-between drop-shadow-md md:border-solid md:rounded md:border-2 md:border-dark/5 md:dark:border-light/10">
-   <div className="flex gap-2 p-2">
+  <div className="prompt min-w-[480px] gap-2">
+   <div className="header">
     <Skeleton className="w-[40px] h-[40px] rounded-md" />
     <Skeleton className="h-[40px] rounded-md grow" />
    </div>
    <Skeleton className="min-h-[300px]" />
-   <Skeleton className="w-full" />
-   <div className="flex flex-col gap-2 p-2 text-sm">
+   <div className="px-4 py-2 flex gap-2 flex-col">
+    <Skeleton className="w-36 h-4" />
+    <Skeleton className="w-20 h-4" />
+    <Skeleton className="w-full h-4" />
     <div className="flex gap-2">
-     <ILike className="w-8 h-8" />
-     <IComments className="w-8 h-8" />
+     <Skeleton className="w-24 h-4" />
+     <Skeleton className="w-24 h-4" />
     </div>
-    <Skeleton className="h-3 w-[15%]" />
-    <div className="flex gap-2">
-     <Skeleton className="h-3 basis-1/4" />
-     <Skeleton className="h-3 grow" />
-    </div>
-    <Skeleton className="w-48 h-3" />
+    <Skeleton className="w-16 h-4" />
    </div>
   </div>
  );
