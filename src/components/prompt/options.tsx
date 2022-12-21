@@ -7,41 +7,43 @@ import { validatePostVote } from "@lib/versus/validate";
 import { makePostRequest } from "@lib/make-requests";
 import determineWinner from "@lib/determine-winner";
 import { IWinner } from "@components/icons";
+import { MutateData } from "types";
+import useRequest from "@hooks/useRequest";
 
 // prettier-ignore
-type OptionsProps = { options: Versus.Prompt["options"]; userCanVote: boolean; pid: number;};
-
-export default function Options({ options, userCanVote, pid }: OptionsProps) {
+export default function Options(props: MutateData<Versus.Prompt>) {
  const { data: session } = useSession();
- const [canVote, setCanVote] = useState(userCanVote);
- const [votes, setVotes] = useState<number[]>(options.map((o) => o.votes));
+ const [canVote, setCanVote] = useState(props.data.userCanVote);
+ const [votes, setVotes] = useState<number[]>(props.data.options.map((o) => o.votes));
+
+ const request = useRequest(async (pid: string, uid: string, oid: string, previous: any) => {
+		  const validated = validatePostVote({ pid, uid, oid });
+    
+				await makePostRequest(`/api/prompts/${props.data.number}/votes`, validated)
+					.catch(e => {
+					request.reset(() => {
+     setCanVote(previous.canVote);
+     setVotes(previous.votes);
+					});
+				});
+  		props.mutate && props.mutate();
+	});
+
  const totalVotes = votes.reduce((a, b) => a + b, 0);
  const opacity = !canVote ? "opacity-100" : "opacity-0";
 
  const handleVote = async (id: string, idx: number) => {
-  if (!canVote) return;
-
-  const previous = { canVote, votes };
+  if (!canVote || props.isRefreshing) return;
+		const previous = { votes, canVote };
   setCanVote(false);
   setVotes([idx === 0 ? votes[0] + 1 : votes[0], idx === 1 ? votes[1] + 1 : votes[1]]);
-
   if (!session?.user.id) return;
-  const vote = validatePostVote({
-   pid: `${pid}`,
-   uid: session.user.id as string,
-   oid: id,
-  });
-  const res = await makePostRequest(`/api/prompts/${pid}`, vote);
-
-  if (!res?.ok) {
-   setCanVote(previous.canVote);
-   setVotes(previous.votes);
-  }
+		request.trigger(`${props.data.number}`, session?.user.id, id, previous);
  };
 
  return (
   <div className="w-full">
-   {options.map((option, i) => {
+   {props.data.options.map((option, i) => {
     return (
      <button
       key={option.id}
