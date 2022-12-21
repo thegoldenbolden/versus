@@ -6,7 +6,7 @@ import TwitterProvider from "next-auth/providers/twitter";
 import p from "@lib/prisma";
 
 export const options: NextAuthOptions = {
- debug: true,
+ debug: process.env.NODE_ENV === "development",
  secret: process.env.NEXTAUTH_SECRET,
  pages: {
   signIn: "/login",
@@ -26,6 +26,7 @@ export const options: NextAuthOptions = {
   TwitterProvider({
    clientId: process.env.TWITTER_CONSUMER_KEY as string,
    clientSecret: process.env.TWITTER_CONSUMER_SECRET as string,
+   version: "2.0",
   }),
  ],
  callbacks: {
