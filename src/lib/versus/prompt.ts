@@ -183,7 +183,7 @@ export async function getPrompt(_pid: string, uid: string) {
  return createResponse(prompt, reacted, uid);
 }
 
-function createResponse(prompt: P, reacted: Reacted, uid: string | undefined) {
+export function createResponse(prompt: P, reacted: Reacted, uid: string | undefined) {
  const { author, createdAt, _count, options } = prompt;
  return {
   number: prompt.id,

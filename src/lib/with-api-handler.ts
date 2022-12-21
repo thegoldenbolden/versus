@@ -21,7 +21,7 @@ const withApiHandler = (handler: WithNextApiHandler) => {
     default:
      throw new CustomError(405);
     case "GET":
-     log(`Fetch Attempt`, { url: req.url, query: req.query, user: uid });
+     log(`Get Attempt`, { url: req.url, query: req.query, user: uid });
      response = await handler(req, pid, uid);
      return res.status(200).send({ ...response, status: 200, ok: true });
     case "POST":
