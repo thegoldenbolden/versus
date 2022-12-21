@@ -24,7 +24,7 @@
    "@lib/*": ["lib/*"],
    "@auth/*": ["pages/api/[auth]/*"],
    "@styles/*": ["styles/*"],
-   "@types/*": ["./types/*"]
+   "@types/*": ["types/*"]
   }
  },
  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
