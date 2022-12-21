@@ -32,16 +32,30 @@
    @apply text-light;
   }
  }
-}
 
-.toggle-opacity {
- opacity: .5;
+ .toggle-opacity {
+  opacity: .5;
 
- &:hover,
- &:focus {
-  opacity: 1;
+  &:hover,
+  &:focus {
+   opacity: 1;
+  }
  }
+
+ .btn-hover {
+
+  &:hover,
+  &:focus-within {
+   @apply bg-dark/5 transition-colors;
+
+   @include dark-mode {
+    @apply bg-light/10
+   }
+  }
+ }
+
 }
+
 
 @layer components {
  .auth {
@@ -86,60 +100,39 @@
  }
 
  .icon {
-  @apply h-6 w-6;
+  @apply h-7 w-7;
 
-  @media (min-width: theme("screens.sm")) {
+  @media (min-width: theme("screens.xs")) {
    @apply h-8 w-8;
   }
  }
 
  .icon-w-text {
-  @apply flex flex-col gap-2 p-2 rounded items-center w-full justify-between btn-primary-effects;
+  @apply flex flex-col gap-2 p-2 rounded items-center w-full justify-between;
 
+  &.active,
   &:hover,
   &:focus-within {
-   @apply shadow-default shadow-dark/50;
 
-   @media (prefers-color-scheme: dark) {
-    @apply shadow-light/50
+   svg {
+    stroke-width: 2px;
    }
   }
 
   span {
    @apply hidden text-sm;
 
-   @media (min-width: theme("screens.md")) {
+   @media (min-width: theme("screens.sm")) {
     @apply block;
-   }
-  }
- }
-
- .center-page {
-  min-height: 100dvh;
-  min-width: 100dvw;
-  display: grid;
-  place-items: center;
- }
-
-
- .btn-primary-effects {
-
-  &:hover,
-  &:focus-within {
-   @apply bg-dark/5;
-  }
-
-  @media (prefers-color-scheme: dark) {
-
-   &:hover,
-   &:focus-within {
-    @apply bg-light/10;
+    @apply text-xs;
    }
   }
  }
 
  .prompt {
   @apply w-full flex flex-col;
+  max-width: 480px;
+  width: min(100%, 480px);
 
   .header {
    @apply flex gap-2 py-2 items-center;
@@ -191,34 +184,19 @@
     content: "";
     top: .2em;
     filter: drop-shadow(3px 3px 3px rgba(0 0 0 / .75));
+    left: .2em
    }
 
    .votes {
     position: absolute;
     content: "";
     bottom: 0.5em;
-   }
+    right: 1em;
 
-   &:nth-child(odd) {
-    .votes {
-     right: 1em;
-    }
-
-    .winner {
-     left: .2em
-    }
    }
 
    &:nth-child(even) {
     background: linear-gradient(247.1deg, #FD0D0D 0%, #6B0404 100%);
-
-    .winner {
-     right: .2em;
-    }
-
-    .votes {
-     left: 1em;
-    }
    }
 
    &:hover,
@@ -274,8 +252,6 @@
  }
 }
 
-;
-
 @layer base {
 
  *,
@@ -323,6 +299,24 @@
  button,
  select {
   font: inherit;
+  background: transparent;
+ }
+
+ label {
+  opacity: 1;
+  @apply color-theme;
+ }
+
+ input,
+ textarea {
+  &::placeholder {
+   @apply color-theme;
+   opacity: .75;
+  }
+
+  &:focus {
+   outline: none;
+  }
  }
 
  :disabled {
