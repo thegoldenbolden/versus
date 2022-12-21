@@ -10,13 +10,14 @@ import useRequest from "@hooks/useRequest";
 import Spinner from "@components/spinner";
 import RootLayout from "@layouts/root";
 import getUser from "@lib/get-user";
+import Head from "next/head";
 
 // # TODO: improve
 
 const initial = {
  title: "",
  description: "",
- options: [] as string[],
+ options: ["", ""] as string[],
  tags: [] as string[],
 };
 
@@ -33,7 +34,7 @@ const reducer = (state: any, payload: any) => {
   case "tags":
    return { ...state, [payload.type]: payload.tags };
   case "reset":
-   return { ...initial };
+   return { title: "", description: "", options: [] as string[], tags: [] as string[] };
  }
 };
 
@@ -49,6 +50,8 @@ const Create = (props: { uid: string }) => {
    tags: state.tags,
   });
 
+  request.reset(() => dispatch({ type: "reset" }));
+  return;
   await makePostRequest("/api/prompts", validated, "POST").then(() => {
    request.error && request.setError(null);
    request.reset(() => dispatch({ type: "reset" }));
@@ -92,157 +95,173 @@ const Create = (props: { uid: string }) => {
  };
 
  return (
-  <div className="min-h-screen flex flex-col items-center xs:justify-center">
-   <ErrorBoundary>
-    <form
-     id="create-versus"
-     title="Create Versus"
-     className="rounded-md shadow-lg shadow-black bg-transparent flex flex-col gap-4 p-4 w-full sm:max-w-[640px]"
-     onSubmit={handleSubmit}
-    >
-     <h1 className="font-display text-3xl">Create A Versus</h1>
-     {request.error && <span className="text-red-500">{request.error}</span>}
-     {request.success && <span className="text-green-500">Created versus!</span>}
+  <>
+   <Head>
+    <title>VersusZero</title>
+    <meta charSet="UTF-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f8d07a" />
+    <meta name="msapplication-TileColor" content="#f8d07a" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Create a versus" />
+   </Head>
+   <div className="min-h-screen flex flex-col items-center xs:justify-center">
+    <ErrorBoundary>
+     <form
+      id="create-versus"
+      title="Create Versus"
+      className="rounded-md bg-transparent flex flex-col gap-4 p-4 w-full sm:max-w-[640px]"
+      onSubmit={handleSubmit}
+     >
+      <h1 className="font-display text-3xl">Create A Versus</h1>
+      {request.error && <span className="text-red-500">{request.error}</span>}
+      {request.success && <span className="text-green-500">Created versus!</span>}
 
-     <div className="flex flex-col gap-2">
-      <label
-       className="text-sm opacity-75 border-b-2 border-b-black/25 w-max font-bold"
-       htmlFor="title"
-      >
-       Title
-      </label>
-      <input
-       minLength={2}
-       maxLength={128}
-       id="title"
-       name="title"
-       pattern="^[\w\s.,!?\x22']{1,128}"
-       title="Title must contain alphanumeric characters and up to 128 characters"
-       autoComplete="off"
-       aria-autocomplete="none"
-       className="p-2 border-b-solid border-b-2 border-b-white/50 hover:border-b-white focus:border-b-white"
-       type="text"
-       required
-       value={state.title}
-       aria-required
-       placeholder="Enter a title"
-       onChange={handleInput}
-      />
-     </div>
-     <div className="flex flex-wrap gap-2 w-full">
-      <div className="flex flex-col gap-2 grow">
+      <div className="flex flex-col gap-2">
        <label
-        className="text-sm opacity-75 border-b-2 border-b-black/25 w-max font-bold"
-        htmlFor="option-one"
+        className="text-sm opacity-75 border-b-2 border-b-dark/25 dark:border-b-light/75  w-max font-bold"
+        htmlFor="title"
        >
-        Option One
+        Title
        </label>
        <input
-        minLength={3}
+        minLength={2}
         maxLength={128}
-        id="option-one"
-        autoComplete="off"
-        name="Option One"
-        title="Enter the first option for the versus"
-        type="text"
-        value={state.options[0]}
+        id="title"
+        name="title"
         pattern="^[\w\s.,!?\x22']{1,128}"
+        title="Title must contain alphanumeric characters and up to 128 characters"
+        autoComplete="off"
+        aria-autocomplete="none"
+        className="p-2 border-b-solid border-b-2 dark:border-b-white/50 hover:dark:border-b-light focus:dark:border-b-light border-b-dark/25 hover:border-b-dark focus:border-b-dark"
+        type="text"
         required
+        value={state.title}
         aria-required
-        placeholder="e.g. Spotify"
+        placeholder="Enter a title"
         onChange={handleInput}
-        className="p-2 border-b-solid border-b-2 border-b-white/50 hover:border-b-white focus:border-b-white"
        />
       </div>
-      <div className="flex flex-col gap-2 w-full xs:w-max xs:grow">
+      <div className="flex flex-wrap gap-2 w-full">
+       <div className="flex flex-col gap-2 grow">
+        <label
+         className="text-sm opacity-75 border-b-2 border-b-black/25 dark:border-b-light/75 w-max font-bold"
+         htmlFor="option-one"
+        >
+         Option One
+        </label>
+        <input
+         minLength={3}
+         maxLength={128}
+         id="option-one"
+         autoComplete="off"
+         name="Option One"
+         title="Enter the first option for the versus"
+         type="text"
+         value={state.options[0]}
+         pattern="^[\w\s.,!?\x22']{1,128}"
+         required
+         aria-required
+         placeholder="e.g. Spotify"
+         onChange={handleInput}
+         className="p-2 border-b-solid border-b-2 dark:border-b-white/50 hover:dark:border-b-light focus:dark:border-b-light border-b-dark/25 hover:border-b-dark focus:border-b-dark"
+        />
+       </div>
+       <div className="flex flex-col gap-2 w-full xs:w-max xs:grow">
+        <label
+         className="text-sm opacity-75 border-b-2 border-b-black/25 dark:border-b-light/75 w-max font-bold"
+         htmlFor="option-two"
+        >
+         Option Two
+        </label>
+        <input
+         minLength={3}
+         maxLength={128}
+         autoComplete="off"
+         id="option-two"
+         name="Option Two"
+         type="text"
+         title="Enter the second option for the versus"
+         pattern="^[\w\s.,!?\x22']{1,128}"
+         required
+         aria-required
+         value={state.options[1]}
+         onChange={handleInput}
+         placeholder="e.g. Apple Music"
+         className="p-2 border-b-solid border-b-2 dark:border-b-white/50 hover:dark:border-b-light focus:dark:border-b-light border-b-dark/25 hover:border-b-dark focus:border-b-dark"
+        />
+       </div>
+      </div>
+      <div className="flex flex-col gap-2">
        <label
-        className="text-sm opacity-75 border-b-2 border-b-black/25 w-max font-bold"
-        htmlFor="option-two"
+        className="text-sm opacity-75 border-b-2 border-b-black/25 dark:border-b-light/75 w-max font-bold"
+        htmlFor="description"
        >
-        Option Two
+        Description
        </label>
-       <input
-        minLength={3}
-        maxLength={128}
-        autoComplete="off"
-        id="option-two"
-        name="Option Two"
-        type="text"
-        title="Enter the second option for the versus"
-        pattern="^[\w\s.,!?\x22']{1,128}"
-        required
-        aria-required
-        value={state.options[1]}
+       <textarea
+        minLength={2}
+        maxLength={MAX_MESSAGE_LENGTH}
+        id="description"
+        value={state.description}
+        name="description"
+        placeholder="Enter a description"
+        title="Enter a description"
+        className="outline-none p-2 border-b-solid border-b-2 dark:border-b-white/50 hover:dark:border-b-light focus:dark:border-b-light border-b-dark/25 hover:border-b-dark focus:border-b-dark"
         onChange={handleInput}
-        placeholder="e.g. Apple Music"
-        className="p-2 border-b-solid border-b-2 border-b-white/50 hover:border-b-white focus:border-b-white"
        />
       </div>
-     </div>
-     <div className="flex flex-col gap-2">
-      <label
-       className="text-sm opacity-75 border-b-2 border-b-black/25 w-max font-bold"
-       htmlFor="description"
-      >
-       Description
-      </label>
-      <textarea
-       minLength={2}
-       maxLength={MAX_MESSAGE_LENGTH}
-       id="description"
-       value={state.description}
-       name="description"
-       placeholder="Enter a description"
-       title="Enter a description"
-       className="outline-none p-2 border-b-solid border-b-2 border-b-white/50 hover:border-b-white focus:border-b-white"
-       onChange={handleInput}
-      />
-     </div>
-     <div className="flex flex-col gap-2">
-      <label
-       className="text-sm opacity-75 border-b-2 border-b-black/25 w-max font-bold"
-       htmlFor="tags"
-      >
-       Tags
-      </label>
-      <div title="Select tags for the versus" id="tags" className="flex flex-wrap gap-2">
-       {TAGS.map((tag) => {
-        const active = state.tags.some((t: any) => t === tag.id);
-        const activeClass = active ? "border-sky-900" : "border-transparent";
-        return (
-         <button
-          title={tag.name}
-          type="button"
-          className={`${activeClass} hover:bg-sky-100/25 border-solid border-2 px-2 text-xs items-center flex gap-2`}
-          onClick={() => handleTagSelect(tag.id)}
-          key={tag.id}
-         >
-          {active && <ICheckmark />}
-          {tag.name}
-         </button>
-        );
-       })}
+      <div className="flex flex-col gap-2">
+       <label
+        className="text-sm opacity-75 border-b-2 border-b-black/25 dark:border-b-light/75 w-max font-bold"
+        htmlFor="tags"
+       >
+        Tags
+       </label>
+       <div title="Select tags for the versus" id="tags" className="flex flex-wrap gap-2">
+        {TAGS.map((tag) => {
+         const active = state.tags.some((t: any) => t === tag.id);
+         const activeClass = active ? "border-sky-900" : "border-transparent";
+         return (
+          <button
+           title={tag.name}
+           type="button"
+           className={`${activeClass} hover:bg-sky-100/25 border-solid border-2 px-2 text-xs items-center flex gap-2`}
+           onClick={() => handleTagSelect(tag.id)}
+           key={tag.id}
+          >
+           {active && <ICheckmark />}
+           {tag.name}
+          </button>
+         );
+        })}
+       </div>
       </div>
-     </div>
-     <div className="self-end flex flex-wrap gap-2">
-      <button
-       className="font-display text-xl rounded-sm px-4 py-1 min-w-[100px] hover:bg-green-300 focus:bg-green-300"
-       type="reset"
-       onClick={() => dispatch({ type: "reset" })}
-      >
-       Clear
-      </button>
-      <button
-       className="font-display text-xl rounded-sm px-4 py-1 min-w-[100px] hover:bg-green-300 focus:bg-green-300"
-       disabled={request.submitting}
-       type="submit"
-      >
-       {request.submitting ? <Spinner /> : "Post"}
-      </button>
-     </div>
-    </form>
-   </ErrorBoundary>
-  </div>
+      <div className="self-end flex flex-wrap gap-2">
+       <button
+        className="font-display transition-colors text-xl color-theme rounded-full px-4 border-solid border-2 border-red-800 py-1 min-w-[100px] hover:text-light focus:text-light hover:bg-red-800 focus:bg-red-800"
+        type="reset"
+        onClick={() => dispatch({ type: "reset" })}
+       >
+        Clear
+       </button>
+       <button
+        className="font-display transition-colors text-xl color-theme rounded-full px-4 py-1 border-solid border-2 border-indigo-700 min-w-[100px] hover:text-light focus:text-light hover:bg-indigo-700 focus:bg-indigo-700"
+        disabled={request.submitting}
+        type="submit"
+       >
+        {request.submitting ? <Spinner /> : "Post"}
+       </button>
+      </div>
+     </form>
+    </ErrorBoundary>
+   </div>
+  </>
  );
 };
 
