@@ -125,11 +125,11 @@
   }
 
   span {
-   @apply hidden text-sm;
+   @apply hidden;
 
    @media (min-width: theme("screens.sm")) {
     @apply block;
-    @apply text-xs;
+    @apply font-medium;
    }
   }
  }
