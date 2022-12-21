@@ -14,15 +14,13 @@ class ErrorBoundary extends Component {
   return { hasError: true };
  }
 
- componentDidCatch(error: any, errorInfo: any) {
-  // You can use your own error logging service here
-  log("Error Boundary", { error, errorInfo });
- }
+ // Not implemented
+ componentDidCatch(error: any, errorInfo: any) {}
 
  render() {
   if (this.state.hasError) {
    return (
-    <div className="px-4 py-2 flex flex-col gap-2">
+    <div className="px-4 py-2 flex flex-col gap-2 max-w-[480px] w-full">
      <h2>Oops, there is an error!</h2>
      <button
       type="button"

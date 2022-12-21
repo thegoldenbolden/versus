@@ -8,6 +8,7 @@ import { BASE_URL } from "@lib/constants";
 import { validatePostLike } from "@lib/versus/validate";
 import useRequest from "@hooks/useRequest";
 import { MutateData } from "types";
+import Link from "next/link";
 
 // prettier-ignore
 type LikeProps = { 
@@ -111,18 +112,26 @@ const Like = (props: LikeProps) => {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
        >
-        <Dialog.Panel className="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform rounded-md shadow-xl bg-light">
-         <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+        <Dialog.Panel className="w-full drop-shadow-md max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform rounded-sm shadow-xl bg-theme color-theme">
+         <Dialog.Title as="h3" className="text-2xl leading-6 colors-theme">
           VersusZero
          </Dialog.Title>
          <div className="mt-2">
-          <p className="text-sm text-gray-500">You must be logged in to leave a like.</p>
+          <p className="text-md text-dark/75 dark:text-light/75">
+           You must be logged in to leave a like.
+          </p>
          </div>
 
-         <div className="mt-4">
+         <div className="mt-4 flex gap-2 items-center">
+          <Link
+           className="inline-flex justify-center px-4 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/25 grow border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+           href="/login"
+          >
+           Login
+          </Link>
           <button
            type="button"
-           className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+           className="inline-flex justify-center px-4 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/25 grow border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
            onClick={closeModal}
           >
            Got it, thanks!

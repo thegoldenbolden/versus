@@ -1,4 +1,4 @@
-export { FaDiscord as IDiscord } from "react-icons/fa";
+export { FaDiscord as IDiscord, FaGoogle as IGoogle, FaTwitter as ITwitter } from "react-icons/fa";
 
 // TODO find a send icon
 export {
@@ -21,4 +21,5 @@ export {
  HiOutlineGift as ISurprise,
  HiOutlineXMark as IClose,
  HiOutlineCheck as ICheckmark,
+ HiOutlineSquares2X2 as IPosts,
 } from "react-icons/hi2";
