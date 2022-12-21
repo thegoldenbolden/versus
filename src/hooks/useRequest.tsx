@@ -1,24 +1,29 @@
 import { useState } from "react";
 
-const useRequest = (callback: Function, resetCallback?: Function) => {
+const useRequest = (callback: Function) => {
  const [submitting, setSubmitting] = useState(false);
  const [error, setError] = useState(null);
+ const [success, setSuccess] = useState(false);
 
  const trigger = async (...args: any) => {
   try {
+   if (submitting) return;
    setSubmitting(true);
    await callback(...args);
    setError(null);
+   setSuccess(true);
   } catch (error: any) {
    setError(error.message);
-   console.log("error in trigger");
-   resetCallback && resetCallback();
   } finally {
    setSubmitting(false);
   }
  };
 
- return { submitting, error, trigger };
+ const reset = (cb: Function) => {
+  cb();
+ };
+
+ return { submitting, error, trigger, reset, setError, success };
 };
 
 export default useRequest;
