@@ -13,7 +13,7 @@ import { makeRequest } from "@lib/make-requests";
 const Page = ({ data }: { data: Versus.Prompt }) => {
  return (
   <ErrorBoundary>
-   <div className="">
+   <div className="w-full min-h-screen flex justify-center items-center flex-wrap">
     {!data ? (
      <NotFound />
     ) : (
@@ -40,6 +40,7 @@ Page.getLayout = (page: ReactNode) => <RootLayout>{page}</RootLayout>;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
  let prompt: any = null;
+
  if (params?.prompt) {
   const uid = (await getUser(req, res))?.user?.id;
   prompt = await getPrompt(params.prompt as string, uid as string);
