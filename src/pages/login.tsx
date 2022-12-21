@@ -2,8 +2,8 @@ import AuthLayout from "../layouts/auth";
 import { Login } from "../components/button/auth";
 import { IDiscord, IGoogle, ITwitter } from "../components/icons";
 import { GetServerSideProps } from "next";
-import { getToken } from "next-auth/jwt";
 import Head from "next/head";
+import getUser from "@lib/get-user";
 
 const Page = () => {
  return (
@@ -39,7 +39,7 @@ const Page = () => {
 Page.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>;
 export default Page;
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
- const token = await getToken({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+ const token = await getUser(req, res);
  return !token ? { props: {} } : { redirect: { destination: "/", permanent: false } };
 };
