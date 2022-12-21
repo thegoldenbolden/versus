@@ -1,11 +1,11 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
-import prisma from "@lib/prisma";
+import TwitterProvider from "next-auth/providers/twitter";
+import adapter from "@lib/adapter";
 
 export const options: NextAuthOptions = {
- adapter: PrismaAdapter(prisma),
  debug: true,
+ adapter,
  secret: process.env.NEXTAUTH_SECRET,
  pages: {
   signIn: "/login",
@@ -20,6 +20,10 @@ export const options: NextAuthOptions = {
   DiscordProvider({
    clientId: process.env.DISCORD_CLIENT_ID as string,
    clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+  }),
+  TwitterProvider({
+   clientId: process.env.TWITTER_CLIENT_ID as string,
+   clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
   }),
  ],
  callbacks: {
