@@ -20,4 +20,5 @@ export {
  HiOutlineTag as ITag,
  HiOutlineGift as ISurprise,
  HiOutlineXMark as IClose,
+ HiOutlineCheck as ICheckmark,
 } from "react-icons/hi2";
