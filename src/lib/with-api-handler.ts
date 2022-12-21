@@ -13,7 +13,7 @@ const withApiHandler = (handler: WithNextApiHandler) => {
  return async (req: NextApiRequest, res: NextApiResponse) => {
   try {
    const session = await getUser(req, res);
-   const pid = req.method === "POST" ? req.body.id : req.query.pid;
+   const pid = req.method === "POST" ? req.body.pid : req.query.pid;
    const uid = session?.user.id;
    let response: any;
 
@@ -31,7 +31,7 @@ const withApiHandler = (handler: WithNextApiHandler) => {
      return res.status(201).send({ ...response, status: 201, ok: true });
     case "DELETE":
      log(`Delete Attempt`, { url: req.url, query: req.query, user: uid });
-     if (!uid) throw new CustomError(401);
+     if (!uid || !pid) throw new CustomError(401);
      await handler(req, pid, uid);
      return res.status(200).send({ status: 200, ok: true });
    }
