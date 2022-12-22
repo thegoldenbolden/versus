@@ -24,8 +24,8 @@ export const options: NextAuthOptions = {
    authorization: "https://discord.com/api/oauth2/authorize?scope=identify",
   }),
   TwitterProvider({
-   clientId: process.env.TWITTER_CONSUMER_KEY as string,
-   clientSecret: process.env.TWITTER_CONSUMER_SECRET as string,
+   clientId: process.env.TWITTER_ID as string,
+   clientSecret: process.env.TWITTER_SECRET as string,
    version: "2.0",
   }),
  ],
