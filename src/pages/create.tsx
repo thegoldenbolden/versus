@@ -51,7 +51,6 @@ const Create = (props: { uid: string }) => {
   });
 
   request.reset(() => dispatch({ type: "reset" }));
-  return;
   await makePostRequest("/api/prompts", validated, "POST").then(() => {
    request.error && request.setError(null);
    request.reset(() => dispatch({ type: "reset" }));
