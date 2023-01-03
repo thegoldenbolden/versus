@@ -5,7 +5,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import getUser from "@lib/get-user";
 
-const Page = () => {
+const Page = ({ error }: { error: string | null }) => {
  return (
   <>
    <Head>
@@ -22,10 +22,14 @@ const Page = () => {
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Login to VersusZero" />
    </Head>
-   <span>Please login with one of the following:</span>
-   {/* <Login provider="google">
+   {error ? (
+    <span className="text-red-500">{error}</span>
+   ) : (
+    <span>Please login with one of the following:</span>
+   )}
+   <Login provider="google">
     <IGoogle />
-   </Login> */}
+   </Login>
    <Login provider="twitter">
     <ITwitter />
    </Login>
@@ -39,7 +43,16 @@ const Page = () => {
 Page.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>;
 export default Page;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+ const { req, res } = context;
  const token = await getUser(req, res);
- return !token ? { props: {} } : { redirect: { destination: "/", permanent: false } };
+ let error = null;
+
+ if (context.query.error === "OAuthAccountNotLinked") {
+  error = "Please login with the same provider as the first time you logged in.";
+ }
+
+ return !token
+  ? { props: { error } }
+  : { redirect: { destination: "/", permanent: false } };
 };
