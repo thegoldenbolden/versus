@@ -18,7 +18,7 @@ const Page = () => {
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Oops" />
    </Head>
-   <div className="w-full h-vh">An error occured</div>;
+   <div className="w-full h-vh">An error happened. D:</div>;
   </>
  );
 };
