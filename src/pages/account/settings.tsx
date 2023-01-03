@@ -21,7 +21,7 @@ const Settings = () => {
   <div className="h-screen flex items-center justify-center flex-col gap-2">
    <p className="text-center">
     This page is currently under development. However, if you would like to delete your
-    account click the 'Delete Account' button below.
+    account click the &apos;Delete Account&apos; button below.
    </p>
    <button
     onClick={handleDelete}
