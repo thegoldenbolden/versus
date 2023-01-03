@@ -24,10 +24,10 @@ const Terms = () => {
      <li>
       <h2>Introduction</h2>
       <p>
-       These terms of service (the "Terms") govern your use of Versus Zero's website and
+       {`These terms of service (the "Terms") govern your use of Versus Zero's website and
        online services (the "Services"). By accessing or using the Services, you agree to
        be bound by these Terms. If you do not agree to these Terms, you may not use the
-       Services.
+       Services.`}
       </p>
      </li>
      <li>
@@ -51,8 +51,9 @@ const Terms = () => {
       <p>
        You may not use the Services for any unlawful or prohibited purpose, or in any way
        that could damage, disable, overburden, or impair the Services or interfere with
-       any other party's use of the Services. You may not attempt to gain unauthorized
-       access to the Services or any systems or networks connected to the Services.
+       any other party&apos;s use of the Services. You may not attempt to gain
+       unauthorized access to the Services or any systems or networks connected to the
+       Services.
       </p>
      </li>
      <li>
@@ -68,10 +69,10 @@ const Terms = () => {
      <li>
       <h2>Disclaimer of Warranties</h2>
       <p>
-       The Services are provided on an "as is" and "as available" basis. Versus Zero makes
+       {`The Services are provided on an "as is" and "as available" basis. Versus Zero makes
        no representations or warranties of any kind, express or implied, as to the
        operation of the Services or the information, content, materials, or products
-       included on the Services.
+       included on the Services.`}
       </p>
      </li>
      <li>
@@ -86,9 +87,10 @@ const Terms = () => {
       <h2>Indemnification</h2>
       <p>
        You agree to indemnify and hold Versus Zero and its affiliates, officers, agents,
-       and employees harmless from any claim or demand, including reasonable attorneys'
-       fees, made by any third party due to or arising out of your use of the Services,
-       your violation of these Terms, or your violation of any rights of another.
+       and employees harmless from any claim or demand, including reasonable
+       attorneys&apos; fees, made by any third party due to or arising out of your use of
+       the Services, your violation of these Terms, or your violation of any rights of
+       another.
       </p>
      </li>
      <li>

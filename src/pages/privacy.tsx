@@ -43,35 +43,47 @@ const Privacy = () => {
      </li>
      <li>
       <h2>How We Use Your Information</h2>
-      <div>
-       We use t
+      <div className="flex flex-col gap-2">
        <p>
         We use the personal information we collect about you for various purposes,
         including:
        </p>
-       <ul>
+       <ol className="opacity-80">
         <li>To provide user support and assistance</li>
         <li>To personalize your experience on our website</li>
         <li>To improve the quality of our website and services</li>
-       </ul>
+       </ol>
+       <p>
+        To access certain features of the Services, you may need to create an account. You
+        are responsible for maintaining the confidentiality of your account login
+        information and for all activities that occur under your account. You agree to
+        notify us immediately of any unauthorized use of your account.
+       </p>
       </div>
-      <p>
-       To access certain features of the Services, you may need to create an account. You
-       are responsible for maintaining the confidentiality of your account login
-       information and for all activities that occur under your account. You agree to
-       notify us immediately of any unauthorized use of your account.
-      </p>
      </li>
      <li>
       <h2>Sharing Your Information</h2>
-      <p>
-       We may share your personal information with third parties in certain circumstances,
-       such as: With service providers who perform services on our behalf, such as payment
-       processors and fulfillment centers With business partners and affiliates who offer
-       products or services that may be of interest to you In the event that we are
-       acquired by or merged with another company We will not sell your personal
-       information to third parties for their own marketing purposes.
-      </p>
+      <div className="flex flex-col gap-2">
+       <p>
+        We may share your personal information with third parties in certain
+        circumstances, such as:
+       </p>
+       <ol className="opacity-80">
+        <li>
+         With service providers who perform services on our behalf, such as payment
+         processors and fulfillment centers
+        </li>
+        <li>
+         With business partners and affiliates who offer products or services that may be
+         of interest to you
+        </li>
+        <li>In the event that we are acquired by or merged with another company</li>
+       </ol>
+       <p>
+        We will not sell your personal information to third parties for their own
+        marketing purposes.
+       </p>
+      </div>
      </li>
      <li>
       <h2>Data Security</h2>
@@ -103,7 +115,12 @@ const Privacy = () => {
       <p>
        If you have any questions or concerns about our privacy policy or the handling of
        your personal information, please contact us at&nbsp;
-       <a target="_blank" rel="noreferrer noopenner" href="mailto:noodlexcvii@gmail.com">
+       <a
+        className="opacity-100"
+        target="_blank"
+        rel="noreferrer noopenner"
+        href="mailto:noodlexcvii@gmail.com"
+       >
         noodlexcvii@gmail.com
        </a>
       </p>
