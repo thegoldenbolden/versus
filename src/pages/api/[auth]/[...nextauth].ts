@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import TwitterProvider from "next-auth/providers/twitter";
+import GoogleProvider from "next-auth/providers/google";
 import p from "@lib/prisma";
 
 export const options: NextAuthOptions = {
@@ -28,6 +28,10 @@ export const options: NextAuthOptions = {
    clientSecret: process.env.TWITTER_SECRET as string,
    version: "2.0",
   }),
+		GoogleProvider({
+			clientId: process.env.GOOGLE_CLIENT_ID as string,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+		})
  ],
  callbacks: {
   async session({ session, user }) {

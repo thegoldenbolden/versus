@@ -24,6 +24,7 @@ module.exports = {
    colors: {
     discord: "#5865f2",
     twitter: "#1DA1F2",
+    google: "#de5246",
     dark: "#0c0c0c",
     light: "#fcfcfc",
     primary: "#59E6F9",
