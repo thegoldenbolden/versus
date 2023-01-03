@@ -242,6 +242,39 @@
   }
  }
 
+ .support {
+  @apply p-4 flex flex-col gap-2;
+
+  h1,
+  h2 {
+   @apply font-display;
+  }
+
+  h1 {
+		@apply text-4xl;
+  }
+
+  h2 {
+   @apply text-2xl;
+  }
+
+  ol {
+   @apply flex flex-col gap-2 px-4;
+   list-style-type: decimal;
+  }
+
+  a {
+   @apply text-secondary font-bold underline;
+
+   @include dark-mode() {
+    @apply text-primary;
+   }
+  }
+
+  p {
+   @apply opacity-75;
+  }
+ }
 
  .spinner {
   @apply rounded-full border-2 border-transparent border-r-dark border-t-dark border-solid;
