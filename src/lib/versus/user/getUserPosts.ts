@@ -5,7 +5,7 @@ import prisma from "@lib/prisma";
 import CustomError from "@lib/error";
 
 export const getUserPosts: Versus.GetManyPrompts = async (args) => {
- // Should never make it this far.
+ // Should always have a user id at this point.
  if (!args.uid) throw new CustomError(401);
 
  args.take = parseInt(args.take as string) || MAX_PROMPTS_PER;
