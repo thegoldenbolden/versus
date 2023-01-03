@@ -29,7 +29,7 @@ const Page = ({ data }: { data: Versus.Prompt }) => {
     <meta name="description" content="Your account" />
    </Head>
    <ErrorBoundary>
-    <div className="w-full min-h-screen flex justify-center items-center flex-wrap">
+    <div className="flex flex-wrap items-center justify-center w-full min-h-screen">
      {!data ? (
       <NotFound />
      ) : (
