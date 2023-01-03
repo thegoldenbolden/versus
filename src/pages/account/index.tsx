@@ -75,12 +75,12 @@ const Account = ({ user, totals }: AccountProps) => {
    </Head>
    <div className="min-h-screen max-w-[720px] items-center justify-center ml-auto mr-auto flex flex-col w-full">
     <header className="flex flex-col w-full gap-2">
-     <div className="flex w-full account-header pt-4 flex-col gap-2">
+     <div className="flex flex-col w-full gap-2 pt-4 account-header">
       <div className="z-[2000]">
        <Image
         height={96}
         width={96}
-        className="block rounded-full ml-2"
+        className="block ml-2 rounded-full"
         alt="avatar"
         src={user.image ?? ""}
        />
