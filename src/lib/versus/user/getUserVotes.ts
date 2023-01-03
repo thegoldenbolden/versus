@@ -8,7 +8,7 @@ export const getUserVotes: Versus.GetManyPrompts = async (args) => {
  if (!args.uid) throw new CustomError(401);
 
  args.take = parseInt(args.take as string) || MAX_PROMPTS_PER;
- args.cursor = parseInt(args.cursor as string) || 1;
+ args.cursor = parseInt(args.cursor as string);
 
  // prettier-ignore
  // Find all prompts the user has voted on
@@ -24,12 +24,14 @@ export const getUserVotes: Versus.GetManyPrompts = async (args) => {
   select: {
    votedPrompts: {
     take: args.take,
-    cursor: {
-     userId_promptId: {
-      promptId: args.cursor,
-      userId: args.uid,
-     },
-    },
+    cursor: args.cursor
+     ? {
+        userId_promptId: {
+         promptId: args.cursor,
+         userId: args.uid,
+        },
+       }
+     : undefined,
     select: {
      option: {
       select: {
