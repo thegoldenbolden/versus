@@ -9,6 +9,7 @@ import { validatePostLike } from "@lib/versus/validate";
 import useRequest from "@hooks/useRequest";
 import { MutateData } from "types";
 import Link from "next/link";
+import { bebas, roboto } from "@lib/fonts";
 
 // prettier-ignore
 type LikeProps = { 
@@ -101,7 +102,7 @@ const Like = (props: LikeProps) => {
       <div className="fixed inset-0 bg-opacity-25 bg-dark" />
      </Transition.Child>
 
-     <div className="fixed inset-0 overflow-y-auto">
+     <div className={`fixed inset-0 overflow-y-auto ${roboto.className}`}>
       <div className="flex items-center justify-center min-h-full p-4 text-center">
        <Transition.Child
         as={Fragment}
@@ -113,7 +114,10 @@ const Like = (props: LikeProps) => {
         leaveTo="opacity-0 scale-95"
        >
         <Dialog.Panel className="w-full drop-shadow-md max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform rounded-sm shadow-xl bg-theme color-theme">
-         <Dialog.Title as="h3" className="text-2xl leading-6 colors-theme">
+         <Dialog.Title
+          as="h3"
+          className={bebas.className + " text-2xl leading-6 colors-theme"}
+         >
           VersusZero
          </Dialog.Title>
          <div className="mt-2">
@@ -124,14 +128,14 @@ const Like = (props: LikeProps) => {
 
          <div className="mt-4 flex gap-2 items-center">
           <Link
-           className="inline-flex justify-center px-4 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/25 grow border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+           className="grow text-center basis-2 px-4 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/50 border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
            href="/login"
           >
            Login
           </Link>
           <button
            type="button"
-           className="inline-flex justify-center px-4 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/25 grow border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+           className="grow text-center px-4 basis-2 py-2 text-sm font-medium color-theme bg-secondary/25 dark:bg-primary/50 border border-transparent rounded-sm hover:bg-dark hover:dark:bg-light hover:text-light hover:dark:text-dark focus:outline-none focus-visible:ring-2 transition-colors focus-visible:ring-blue-500 focus-visible:ring-offset-2"
            onClick={closeModal}
           >
            Got it, thanks!
