@@ -64,42 +64,64 @@ const Page = () => {
    <div className="flex flex-col items-center w-full min-h-screen gap-4 pb-2">
     <ErrorBoundary>
      <Searchbar />
-     <div className="flex flex-col w-[min(100%,480px)] gap-4">
-      {Component ? (
-       <Component />
-      ) : (
-       <>
-        {infinite.pages.map((page) => {
-         return page.items.map((prompt) => {
-          return (
-           <Fragment key={prompt.number}>
-            <Prompt
-             data={prompt}
-             // mutate={infinite.mutate}
-             isRefreshing={infinite.isRefreshing}
-            />
-           </Fragment>
-          );
-         });
-        })}
-        {!infinite.reachingEnd && (
-         <button
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 rounded-sm btn-hover bg-theme color-theme shadow-default"
-          disabled={infinite.isRefreshing || infinite.loadingMore}
-          onClick={() => infinite.setSize((p) => p + 1)}
-         >
-          {infinite.isRefreshing || infinite.loadingMore ? (
-           <>
-            <Spinner />
-            <span>Loading</span>
-           </>
-          ) : (
-           <>Load More</>
-          )}
-         </button>
-        )}
-       </>
-      )}
+     <div className="flex flex-col items-center w-full gap-2 lg:justify-center lg:items-start lg:flex-row">
+      <div className="flex flex-col w-[min(100%,480px)] gap-4">
+       {Component ? (
+        <Component />
+       ) : (
+        <>
+         {infinite.pages.map((page) => {
+          return page.items.map((prompt) => {
+           return (
+            <Fragment key={prompt.number}>
+             <Prompt
+              data={prompt}
+              // mutate={infinite.mutate}
+              isRefreshing={infinite.isRefreshing}
+             />
+            </Fragment>
+           );
+          });
+         })}
+         {!infinite.reachingEnd && (
+          <button
+           className="flex items-center justify-center w-full gap-2 px-4 py-2 rounded-sm btn-hover bg-theme color-theme shadow-default"
+           disabled={infinite.isRefreshing || infinite.loadingMore}
+           onClick={() => infinite.setSize((p) => p + 1)}
+          >
+           {infinite.isRefreshing || infinite.loadingMore ? (
+            <>
+             <Spinner />
+             <span>Loading</span>
+            </>
+           ) : (
+            <>Load More</>
+           )}
+          </button>
+         )}
+        </>
+       )}
+      </div>
+      <div className="flex flex-col gap-2 px-4 py-2 text-sm rounded-md shadow-default">
+       <h1 className="font-bold">Support</h1>
+       <div className="flex gap-2 text-xs">
+        <Link
+         href="/privacy"
+         className="opacity-75 hover:opacity-100 hover:underline focus:opacity-100 focus:underline"
+        >
+         Privacy Policy
+        </Link>
+        <Link
+         href="/terms"
+         className="opacity-75 hover:opacity-100 hover:underline focus:opacity-100 focus:underline"
+        >
+         Terms of Service
+        </Link>
+       </div>
+       <span className="text-xs opacity-75">
+        &copy; {new Date().getFullYear()} Versus Zero
+       </span>
+      </div>
      </div>
     </ErrorBoundary>
    </div>
