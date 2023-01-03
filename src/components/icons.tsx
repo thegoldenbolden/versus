@@ -1,3 +1,4 @@
+//prettier-ignore
 export { FaDiscord as IDiscord, FaGoogle as IGoogle, FaTwitter as ITwitter } from "react-icons/fa";
 
 // TODO find a send icon
