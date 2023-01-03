@@ -12,7 +12,7 @@ const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
  return (
   <div className="grid grid-cols-1 sm:max-h-screen sm:grid-cols-[max-content_1fr] sm:grid-rows-[min-content_100%]">
    <nav className="fixed bottom-0 z-10 flex items-center w-full gap-4 px-2 py-2 shadow-default bg-light/95 dark:bg-dark/95 sm:static sm:overflow-y-auto sm:max-h-screen sm:flex sm:flex-col sm:order-none sm:col-end-1">
-    <span className="mt-1 text-3xl font-display">VersusZero</span>
+    <span className="hidden mt-1 text-3xl sm:block font-display">VersusZero</span>
     <Link
      prefetch={false}
      href="/"
