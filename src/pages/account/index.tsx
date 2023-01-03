@@ -13,6 +13,7 @@ import Link from "next/link";
 import FallbackPrompt from "@components/prompt/fallback";
 import getUserTotals from "@lib/versus/user/totals";
 import Head from "next/head";
+import { ISettings } from "@components/icons";
 
 type AccountProps = {
  user: { image: string | undefined; name: string };
@@ -85,7 +86,12 @@ const Account = ({ user, totals }: AccountProps) => {
         src={user.image ?? ""}
        />
       </div>
-      <span className="px-2 font-bold opacity-75">@{user.name}</span>
+      <div className="flex items-center gap-px">
+       <span className="px-2 font-bold opacity-75">{user.name}</span>
+       <Link href="/account/settings">
+        <ISettings className="w-5 h-5 hover:text-secondary focus:text-secondary dark:hover:text-primary dark:focus:text-primary" />
+       </Link>
+      </div>
      </div>
      <div className="flex gap-2 px-2">
       <span className="text-sm font-bold">

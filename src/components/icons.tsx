@@ -3,6 +3,7 @@ export { FaDiscord as IDiscord, FaGoogle as IGoogle, FaTwitter as ITwitter } fro
 
 // TODO find a send icon
 export {
+ HiOutlineCog8Tooth as ISettings,
  HiOutlinePaperAirplane as IReply,
  HiOutlineTrash as IDelete,
  HiOutlineMagnifyingGlass as ISearch,

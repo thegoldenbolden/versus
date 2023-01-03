@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import CustomError from "@lib/error";
 import getUser from "@lib/get-user";
 import log from "@lib/log";
+import { BASE_URL } from "./constants";
 
 interface WithNextApiHandler {
  // TODO: fix typing for different methods
@@ -31,7 +32,12 @@ const withApiHandler = (handler: WithNextApiHandler) => {
      return res.status(201).send({ ...response, status: 201, ok: true });
     case "DELETE":
      log(`Delete Attempt`, { url: req.url, query: req.query, user: uid });
-     if (!uid || !pid) throw new CustomError(401);
+
+     const deleteAccount = req.url === "/api/user/delete";
+     if (((!uid || !pid) && !deleteAccount) || (deleteAccount && !uid)) {
+      throw new CustomError(401);
+     }
+
      await handler(req, pid, uid);
      return res.status(200).send({ status: 200, ok: true });
    }
