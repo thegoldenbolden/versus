@@ -20,7 +20,7 @@ class ErrorBoundary extends Component {
  render() {
   if (this.state.hasError) {
    return (
-    <div className="px-4 py-2 flex flex-col gap-2 max-w-[480px] w-full">
+    <div className="px-4 py-2 flex flex-col gap-2 items-center w-full">
      <h2>Oops, there is an error!</h2>
      <button
       type="button"
