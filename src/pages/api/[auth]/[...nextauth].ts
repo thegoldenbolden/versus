@@ -38,8 +38,7 @@ export const options: NextAuthOptions = {
   },
  },
  adapter: {
-  createUser: (data) =>
-   p.user.create({ data: { ...data, email: undefined, emailVerified: undefined } }),
+  createUser: (data) => p.user.create({ data: { ...data } }),
   getUser: (id) => p.user.findUnique({ where: { id } }),
   getUserByEmail: (email) => p.user.findUnique({ where: { email } }),
   async getUserByAccount(provider_providerAccountId) {
