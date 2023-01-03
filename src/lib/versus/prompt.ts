@@ -77,7 +77,9 @@ export const deletePrompt = async (pid: string, uid: string) => {
 export const getPrompts: Versus.GetManyPrompts = async (args) => {
  const { tags, q, date, uid } = args;
  args.take = parseInt(args.take as string) || MAX_PROMPTS_PER;
- args.cursor = parseInt(args.cursor as string) || 1;
+
+ // Only use cursor if it is specified, will break 'orderBy' otherwise.
+ args.cursor = parseInt(args.cursor as string);
 
  // Ignore versus that have been rejected.
  const where: Prisma.PromptFindManyArgs["where"] = {
@@ -85,6 +87,8 @@ export const getPrompts: Versus.GetManyPrompts = async (args) => {
  };
 
  const OR = [];
+ // Possibly enable fullTextSearch to allow ordering by relevance
+ // https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting#sort-by-relevance-postgresql
  if (q) {
   OR.push(
    { title: { contains: q, mode: "insensitive" } },
@@ -92,17 +96,20 @@ export const getPrompts: Versus.GetManyPrompts = async (args) => {
   );
  }
 
+ // Check if user included a tag name
  if (tags) {
   const t = tags.split(",").map((tag) => parseInt(tag));
   args.tags = validateTags(t) as any;
   OR.push(...t.map((t) => ({ tags: { has: t } })));
  }
 
+ // If any of the above were true add to where obj.
  if (OR.length > 0) {
   where.OR = OR as any;
  }
 
  // prettier-ignore
+
  // Find all prompts the user has voted on
  let reacted: Prisma.PromptLikeFindManyArgs | Prisma.PromptOptionVoteFindManyArgs | undefined;
 
@@ -112,11 +119,11 @@ export const getPrompts: Versus.GetManyPrompts = async (args) => {
    where: { userId: uid },
   };
  }
-
  const prompts = await prisma.prompt.findMany({
   where,
+  orderBy: { createdAt: "desc" },
   take: args.take,
-  cursor: { id: args.cursor },
+  cursor: args.cursor ? { id: args.cursor } : undefined,
   select: {
    id: true,
    title: true,
