@@ -106,30 +106,39 @@
 
  .icon {
   @apply h-7 w-7;
-
-  @media (min-width: theme("screens.xs")) {
-   @apply h-8 w-8;
-  }
  }
 
  .icon-w-text {
-  @apply flex flex-col gap-2 p-2 rounded items-center w-full justify-between;
+  @apply flex gap-6 py-2 rounded-full w-full px-4 items-center justify-center;
+
 
   &.active,
   &:hover,
   &:focus-within {
+   @apply bg-dark/5 transition-colors;
 
-   svg {
-    stroke-width: 2px;
+   @include dark-mode {
+    @apply bg-light/5
    }
+  }
+
+  &.active {
+   color: theme("colors.secondary");
+
+   @include dark-mode() {
+    color: theme("colors.primary");
+   }
+  }
+
+  @media (min-width: theme("screens.sm")) {
+   @apply justify-between;
   }
 
   span {
    @apply hidden;
 
    @media (min-width: theme("screens.sm")) {
-    @apply block;
-    @apply font-medium;
+    @apply block grow font-medium;
    }
   }
  }
@@ -251,7 +260,7 @@
   }
 
   h1 {
-		@apply text-4xl;
+   @apply text-4xl;
   }
 
   h2 {
