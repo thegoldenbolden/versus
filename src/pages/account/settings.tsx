@@ -18,7 +18,7 @@ const Settings = () => {
  };
 
  return (
-  <div className="h-screen flex items-center justify-center flex-col gap-2">
+  <div className="flex flex-col items-center justify-center h-screen gap-2">
    <p className="text-center">
     This page is currently under development. However, if you would like to delete your
     account click the &apos;Delete Account&apos; button below.
@@ -26,21 +26,20 @@ const Settings = () => {
    <button
     onClick={handleDelete}
     disabled={request.submitting}
-    className="transition-colors bg-red-500 text-white px-4 py-2 rounded-md border-solid border-2 border-transparent hover:border-red-500 focus:border-red-500 hover:bg-transparent focus:bg-transparent hover:text-red-500 focus:text-red-500"
+    className="px-4 py-2 text-white transition-colors bg-red-500 border-2 border-transparent border-solid rounded-md hover:border-red-500 focus:border-red-500 hover:bg-transparent focus:bg-transparent hover:text-red-500 focus:text-red-500"
     type="submit"
    >
     {request.submitting ? <Spinner /> : <>Delete Account</>}
    </button>
-   <span className="flex gap-2 text-sm text-red-500 font-bold">
+   <span className="flex gap-2 text-sm font-bold text-red-500">
     <IFlag className="w-5 h-5" />
     This action is irreversible.
    </span>
-   {request.error ||
-    (true && (
+   {request.error && (
      <span className="text-sm">
       There was an error deleting your account. If the problem persists, please contact us{" "}
       <a
-       className="text-secondary font-bold dark:text-primary"
+       className="font-bold text-secondary dark:text-primary"
        target="_blank"
        rel="noreferrer noopener"
        href="mailto:noodlexcvii@gmail.com"
@@ -48,7 +47,7 @@ const Settings = () => {
        @noodlexcvii@gmail.com
       </a>
      </span>
-    ))}
+    )}
   </div>
  );
 };
