@@ -5,11 +5,7 @@ import p from "@lib/prisma";
 export default function MyAdapter(): Adapter {
  return {
   createUser: async (data) => {
-   const id = nanoid();
-   const user = await p.user
-    .create({ data: { ...data, id, username: "user" + id } })
-    .catch((e) => e);
-   return user;
+   return await p.user.create({ data: { ...data, id: nanoid() } }).catch((e) => e);
   },
   getUser: async (id) => await p.user.findUnique({ where: { id } }).catch((e) => e),
   getUserByEmail: async (email) =>
