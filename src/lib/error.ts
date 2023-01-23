@@ -1,4 +1,4 @@
-type Constructor = { status: number; message?: string; name?: string };
+import { log as group } from "./helpers";
 
 export default class CustomError extends Error {
  status: number;
@@ -14,7 +14,7 @@ export default class CustomError extends Error {
 
   switch (this.status) {
    default:
-    this.message = "An error occurred";
+    this.message = "Something unexpected happened";
     break;
    case 400:
     this.message = "Bad Request";
@@ -34,8 +34,6 @@ export default class CustomError extends Error {
  }
 
  log() {
-  console.group(this.name);
-  console.log(this);
-  console.groupEnd();
+  group(this.name, this);
  }
 }

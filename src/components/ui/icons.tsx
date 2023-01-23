@@ -1,0 +1,25 @@
+export {
+ RiDiscordFill as IDiscordFill,
+ RiGoogleFill as IGoogleFill,
+ RiTwitterFill as ITwitterFill,
+ RiSearchLine as ISearchLine,
+ RiSearchFill as ISearchFill,
+ RiDeleteBin7Fill as IDeleteFill,
+ RiDeleteBin7Line as IDeleteLine,
+ RiLoginCircleLine as ILoginLine,
+ RiLogoutCircleLine as ILogoutLine,
+ RiHomeLine as IHomeLine,
+ RiHomeFill as IHomeFill,
+ // RiHeartLine as IHeartLine,
+ RiHeartFill as IHeartFill,
+ RiUser3Line as IUserLine,
+ RiUser3Fill as IUserFill,
+ RiMore2Line as IMoreLine,
+ RiErrorWarningLine as IWarningLine,
+ RiCheckFill as ICheckmarkFill,
+ RiArrowDownSLine as IArrowDownLine,
+ RiPencilFill as ICreateFill,
+ RiPencilLine as ICreateLine,
+} from "react-icons/ri";
+
+export { HiOutlineHeart as IHeartLine } from "react-icons/hi2";

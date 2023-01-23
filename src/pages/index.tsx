@@ -1,54 +1,16 @@
-import { Fragment } from "react";
-import Link from "next/link";
+import Head from "next/head";
 
 import RootLayout from "@layouts/root";
 import Searchbar from "@components/input/searchbar";
-import ErrorBoundary from "@components/error";
-import Spinner from "@components/spinner";
-import FallbackPrompt from "@components/prompt/fallback";
-import Prompt from "@components/prompt";
-import useInfinite from "@hooks/useInfinite";
-import Head from "next/head";
-
-function LoadingInitial() {
- return (
-  <>
-   {Array.from({ length: 5 }).map((x, i) => {
-    return (
-     <Fragment key={i}>
-      <FallbackPrompt />
-     </Fragment>
-    );
-   })}
-  </>
- );
-}
-
-function isEmpty() {
- return (
-  <div className="flex flex-col items-center self-center justify-center w-screen h-full gap-4 mt-5 mb-auto">
-   <span className="text-2xl">Currently, there are no versus D:</span>
-   <Link href="/create" className="text-3xl font-display">
-    Create A Versus
-   </Link>
-  </div>
- );
-}
+import VersusFeed from "@components/versus/feed";
+import Feed from "@components/feed";
+import Footer from "@components/ui/footer";
 
 const Page = () => {
- const infinite = useInfinite({ route: "/api/prompts?" });
-
- const Component =
-  infinite.loadingInitial || infinite.isRefreshing
-   ? LoadingInitial
-   : infinite.isEmpty
-   ? isEmpty
-   : null;
-
  return (
   <>
    <Head>
-    <title>VersusZero</title>
+    <title>Versus Zero</title>
     <meta charSet="UTF-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,70 +23,16 @@ const Page = () => {
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Who will come out on top?" />
    </Head>
-   <div className="flex flex-col items-center w-full min-h-screen gap-4 pb-2">
-    <ErrorBoundary>
-     <Searchbar />
-     <div className="flex flex-col items-center w-full gap-2 lg:justify-center lg:items-start lg:flex-row">
-      <div className="flex flex-col w-[min(100%,480px)] gap-4">
-       {Component ? (
-        <Component />
-       ) : (
-        <>
-         {infinite.pages.map((page) => {
-          return page.items.map((prompt) => {
-           return (
-            <Fragment key={prompt.number}>
-             <Prompt
-              data={prompt}
-              // mutate={infinite.mutate}
-              isRefreshing={infinite.isRefreshing}
-             />
-            </Fragment>
-           );
-          });
-         })}
-         {!infinite.reachingEnd && (
-          <button
-           className="flex items-center justify-center w-full gap-2 px-4 py-2 rounded-sm btn-hover bg-theme color-theme shadow-default"
-           disabled={infinite.isRefreshing || infinite.loadingMore}
-           onClick={() => infinite.setSize((p) => p + 1)}
-          >
-           {infinite.isRefreshing || infinite.loadingMore ? (
-            <>
-             <Spinner />
-             <span>Loading</span>
-            </>
-           ) : (
-            <>Load More</>
-           )}
-          </button>
-         )}
-        </>
-       )}
-      </div>
-      <div className="flex flex-col gap-2 px-4 py-2 text-sm rounded-md shadow-default">
-       <h1 className="font-bold">Support</h1>
-       <div className="flex gap-2 text-xs">
-        <Link
-         href="/privacy"
-         className="opacity-75 hover:opacity-100 hover:underline focus:opacity-100 focus:underline"
-        >
-         Privacy Policy
-        </Link>
-        <Link
-         href="/terms"
-         className="opacity-75 hover:opacity-100 hover:underline focus:opacity-100 focus:underline"
-        >
-         Terms of Service
-        </Link>
-       </div>
-       <span className="text-xs opacity-75">
-        &copy; {new Date().getFullYear()} Versus Zero
-       </span>
-      </div>
-     </div>
-    </ErrorBoundary>
-   </div>
+   <Feed.Container>
+    <Feed.Items>
+     <VersusFeed />
+    </Feed.Items>
+   </Feed.Container>
+   <Feed.Sidebar>
+    <div className="flex flex-col gap-2">
+     <Footer />
+    </div>
+   </Feed.Sidebar>
   </>
  );
 };

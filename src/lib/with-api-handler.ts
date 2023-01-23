@@ -1,44 +1,45 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 import CustomError from "@lib/error";
 import getUser from "@lib/get-user";
-import log from "@lib/log";
-import { BASE_URL } from "./constants";
+import { log } from "@lib/helpers";
 
 interface WithNextApiHandler {
  // TODO: fix typing for different methods
- (req: NextApiRequest, pid: string, uid?: string): any;
+ (req: NextApiRequest, versusId: string, userId?: string): any;
 }
 
 const withApiHandler = (handler: WithNextApiHandler) => {
  return async (req: NextApiRequest, res: NextApiResponse) => {
   try {
    const session = await getUser(req, res);
-   const pid = req.method === "POST" ? req.body.pid : req.query.pid;
-   const uid = session?.user.id;
+   const versusId = req.method === "POST" ? req.body.versusId : req.query.versusId;
+   const userId = session?.user.id;
    let response: any;
+
+   log("Request", {
+    requestedBy: userId,
+    method: req.method,
+    url: req.url,
+    params: { query: req.query, body: req.body },
+   });
 
    switch (req.method) {
     default:
      throw new CustomError(405);
     case "GET":
-     log(`Get Attempt`, { url: req.url, query: req.query, user: uid });
-     response = await handler(req, pid, uid);
+     response = await handler(req, versusId, userId);
      return res.status(200).send({ ...response, status: 200, ok: true });
     case "POST":
-     log(`Post Attempt`, { url: req.url, body: req.body, user: uid });
-     if (!uid) throw new CustomError(401);
-     response = await handler(req, pid, uid);
+     if (!userId) throw new CustomError(401);
+     response = await handler(req, versusId, userId);
      return res.status(201).send({ ...response, status: 201, ok: true });
     case "DELETE":
-     log(`Delete Attempt`, { url: req.url, query: req.query, user: uid });
-
-     const deleteAccount = req.url === "/api/user/delete";
-     if (((!uid || !pid) && !deleteAccount) || (deleteAccount && !uid)) {
-      throw new CustomError(401);
+     if (!userId) {
+      throw new CustomError(404);
      }
 
-     await handler(req, pid, uid);
+     await handler(req, versusId, userId);
      return res.status(200).send({ status: 200, ok: true });
    }
   } catch (error: any) {

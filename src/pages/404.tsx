@@ -1,11 +1,11 @@
-import RootLayout from "@layouts/root";
 import Head from "next/head";
+import Link from "next/link";
 
 const Custom404 = () => {
  return (
   <>
    <Head>
-    <title>Page Not Found</title>
+    <title>Versus Zero | Page Not Found</title>
     <meta charSet="UTF-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,12 +18,14 @@ const Custom404 = () => {
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Page not found" />
    </Head>
-   <main className="grid w-full place-content-center h-vh">
-    <div className="font-display 3xl md:6xl">Page Not Found</div>
+   <main className="grid w-screen h-screen place-items-center place-content-center">
+    <h1 className="text-3xl font-display">Page Not Found</h1>
+    <Link className="text-base underline hover:font-bold focus:font-bold" href="/">
+     Back to Home
+    </Link>
    </main>
   </>
  );
 };
 
-Custom404.getLayout = (page: React.ReactNode) => <RootLayout>{page}</RootLayout>;
 export default Custom404;

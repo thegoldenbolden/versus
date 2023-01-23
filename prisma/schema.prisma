@@ -41,6 +41,7 @@ model Session {
 model User {
   id              String             @id @unique @default(cuid())
   name            String?
+		username								String?
   image           String?
   email           String?            @unique
   emailVerified   DateTime?          @map("emailVerified")
@@ -50,9 +51,9 @@ model User {
   accounts        Account[]
   sessions        Session[]
   likedComments   CommentLike[]
-  likedPrompts    PromptLike[]
-  votedPrompts    PromptOptionVote[]
-  createdPrompts  Prompt[]
+  likedVersus    VersusLike[]
+  votedVersus    VersusOptionVote[]
+  createdVersus  Versus[]
   createdComments Comment[]
 
   @@map(name: "users")
@@ -64,15 +65,15 @@ enum Role {
   MODERATOR
 }
 
-model Prompt {
+model Versus {
   id          Int            @id @unique @default(autoincrement())
   author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
   title       String
-  options     PromptOption[]
+  options     VersusOption[]
   description String?
-  likes       PromptLike[]
-  status      PromptStatus
+  likes       VersusLike[]
+  status      VersusStatus
   comments    Comment[]
   tags        Int[]          @default([])
 
@@ -80,40 +81,40 @@ model Prompt {
   updatedAt DateTime @updatedAt
 
   @@unique([id, authorId])
-  @@map(name: "prompts")
+  @@map(name: "versus")
 }
 
-model PromptOption {
+model VersusOption {
   id       String             @unique @default(cuid())
   text     String
-  votes    PromptOptionVote[]
-  prompt   Prompt             @relation(fields: [promptId], references: [id], onDelete: Cascade)
-  promptId Int
+  votes    VersusOptionVote[]
+  versus   Versus             @relation(fields: [versusId], references: [id], onDelete: Cascade)
+  versusId Int
 
-  @@unique([promptId, text])
-  @@unique([promptId, id])
+  @@unique([versusId, text])
+  @@unique([versusId, id])
   @@map(name: "options")
 }
 
-model PromptOptionVote {
-  option   PromptOption @relation(fields: [optionId, promptId], references: [id, promptId], onDelete: Cascade)
+model VersusOptionVote {
+  option   VersusOption @relation(fields: [optionId, versusId], references: [id, versusId], onDelete: Cascade)
   optionId String
-  promptId Int
+  versusId Int
   user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
-  @@unique([userId, promptId])
+  @@unique([userId, versusId])
   @@map(name: "votes")
 }
 
-model PromptLike {
+model VersusLike {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
-  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
-  promptId Int
+  versus   Versus @relation(fields: [versusId], references: [id], onDelete: Cascade)
+  versusId Int
 
-  @@unique([promptId, userId])
-  @@map(name: "promptLikes")
+  @@unique([versusId, userId])
+  @@map(name: "versusLikes")
 }
 
 model Comment {
@@ -121,8 +122,8 @@ model Comment {
   message   String
   author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  String
-  prompt    Prompt        @relation(fields: [promptId], references: [id], onDelete: Cascade)
-  promptId  Int
+  versus    Versus        @relation(fields: [versusId], references: [id], onDelete: Cascade)
+  versusId  Int
   parentId  String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
@@ -144,7 +145,7 @@ model CommentLike {
   @@map(name: "commentLikes")
 }
 
-enum PromptStatus {
+enum VersusStatus {
   PENDING
   APPROVED
   REJECTED

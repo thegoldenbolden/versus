@@ -1,15 +1,15 @@
-import AuthLayout from "../layouts/auth";
-import { Login } from "../components/button/auth";
-import { IDiscord, IGoogle, ITwitter } from "../components/icons";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
+
 import getUser from "@lib/get-user";
+import AuthLayout from "../layouts/auth";
+import Providers from "@components/auth/providers";
 
 const Page = ({ error }: { error: string | null }) => {
  return (
   <>
    <Head>
-    <title>VersusZero | Login</title>
+    <title>VZ | Login</title>
     <meta charSet="UTF-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,22 +20,10 @@ const Page = ({ error }: { error: string | null }) => {
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f8d07a" />
     <meta name="msapplication-TileColor" content="#f8d07a" />
     <meta name="theme-color" content="#ffffff" />
-    <meta name="description" content="Login to VersusZero" />
+    <meta name="description" content="Login to Versus Zero" />
    </Head>
-   {error ? (
-    <span className="text-red-500">{error}</span>
-   ) : (
-    <span>Please login with one of the following:</span>
-   )}
-   <Login provider="google">
-    <IGoogle />
-   </Login>
-   <Login provider="twitter">
-    <ITwitter />
-   </Login>
-   <Login provider="discord">
-    <IDiscord />
-   </Login>
+   {error && <span className="text-red-500">{error}</span>}
+   <Providers />
   </>
  );
 };
@@ -45,14 +33,14 @@ export default Page;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
  const { req, res } = context;
- const token = await getUser(req, res);
+ const session = await getUser(req, res);
  let error = null;
 
  if (context.query.error === "OAuthAccountNotLinked") {
   error = "Please login with the same provider as the first time you logged in.";
  }
 
- return !token
+ return !session
   ? { props: { error } }
   : { redirect: { destination: "/", permanent: false } };
 };

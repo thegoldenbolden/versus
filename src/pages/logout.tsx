@@ -1,15 +1,15 @@
-import getUser from "@lib/get-user";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getToken } from "next-auth/jwt";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
-import { Logout } from "../components/button/auth";
-import AuthLayout from "../layouts/auth";
+
+import getUser from "@lib/get-user";
+import AuthLayout from "@layouts/auth";
+import { Logout } from "@components/auth/logout";
 
 const Page = () => {
  return (
   <>
    <Head>
-    <title>VersusZero | Logout</title>
+    <title>Versus Zero | Logout</title>
     <meta charSet="UTF-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,10 +20,14 @@ const Page = () => {
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f8d07a" />
     <meta name="msapplication-TileColor" content="#f8d07a" />
     <meta name="theme-color" content="#ffffff" />
-    <meta name="description" content="Logout of VersusZero" />
+    <meta name="description" content="Sign out of Versus Zero" />
    </Head>
-   <span>See you soon!</span>
-   <Logout />
+   <div className="flex flex-col gap-2">
+    <span className="px-6 text-sm max-w-screen">Come back soon!</span>
+    <div className="flex flex-col items-center gap-2 text-lotion justify-evenly">
+     <Logout />
+    </div>
+   </div>
   </>
  );
 };
@@ -33,6 +37,7 @@ export default Page;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
  const session = await getUser(req, res);
- // prettier-ignore
- return session ? { props: {} } : { redirect: { destination: "/login", permanent: false } };
+ return session
+  ? { props: {} }
+  : { redirect: { destination: "/login", permanent: false } };
 };

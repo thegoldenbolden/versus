@@ -1,57 +1,74 @@
-import { validatePostLike } from "@lib/versus/validate";
+import type { SchemaTypes } from "@lib/zod-schemas/versus";
+import { log } from "@lib/helpers";
 import prisma from "@lib/prisma";
-import log from "@lib/log";
+import CustomError from "@lib/error";
+import Schemas from "@lib/zod-schemas/versus";
 
 /**
- *  If no comment id is provided then attempts to create prompt like.
+ *  If no comment id is provided then attempts to create versus like.
  */
-export const postLike = async ({ pid, uid, cid, type }: Versus.PostLikeArgs) => {
+export const postLike = async (args: SchemaTypes["PostVersusLike"]) => {
  try {
-  const request = validatePostLike({ pid, uid, cid, type });
+  const { versusId, userId, commentId, type } = args;
+  const validated = Schemas.VersusLike.parse({ type, userId, versusId, commentId });
 
-  if (type === "prompt") {
-   await prisma.promptLike.create({
+  if (validated.type === "versus") {
+   // Connect like to user record and versus record.
+   await prisma.versusLike.create({
     data: {
-     prompt: { connect: { id: request.pid } },
-     user: { connect: { id: request.uid } },
+     versus: { connect: { id: validated.versusId } },
+     user: { connect: { id: validated.userId } },
     },
    });
    return;
   }
 
-  // prettier-ignore: Connect like to user record and comment record.
+  // Connect like to user record and comment record.
   await prisma.commentLike.create({
    data: {
-    comment: { connect: { id: request.cid } },
-    user: { connect: { id: request.uid } },
+    comment: { connect: { id: validated.commentId } },
+    user: { connect: { id: validated.userId } },
    },
   });
- } catch (error) {
-  log("PostLikeError", { error });
+ } catch (error: any) {
+  log(error.name, { error });
   throw error;
  }
 };
 
 /**
- * If no comment id is provided then attempts to delete a prompt like.
+ * If no comment id is provided then attempts to delete a versus like.
  */
-export const deleteLike = async ({ pid, uid, cid, type }: Versus.PostLikeArgs) => {
+export const deleteLike = async (args: SchemaTypes["PostVersusLike"]) => {
  try {
-  const request = validatePostLike({ pid, uid, cid, type });
-  if (type === "prompt") {
-   // prettier-ignore: Delete a prompt like
-   await prisma.promptLike.delete({
-    where: { promptId_userId: { promptId: request.pid, userId: request.uid } },
+  const { versusId, userId, commentId, type } = args;
+  const validated = Schemas.VersusDelete.parse({ versusId, userId, commentId, type });
+
+  if (type === "versus") {
+   await prisma.versusLike.delete({
+    where: {
+     versusId_userId: {
+      versusId: validated.versusId,
+      userId: validated.userId,
+     },
+    },
    });
    return;
   }
 
-  // prettier-ignore: Delete a comment like
+  if (!commentId)
+   throw new CustomError(404, "A comment id is required to delete a comment.");
+
   await prisma.commentLike.delete({
-   where: { commentId_userId: { commentId: request.cid, userId: request.uid } },
+   where: {
+    commentId_userId: {
+     commentId: validated.commentId!,
+     userId: validated.userId,
+    },
+   },
   });
- } catch (error) {
-  log("DeleteLikeError", { error });
+ } catch (error: any) {
+  log(error.name, { error });
   throw error;
  }
 };

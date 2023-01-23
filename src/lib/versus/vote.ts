@@ -1,20 +1,23 @@
-import { validatePostVote } from "@lib/versus//validate";
+import type { SchemaTypes } from "@lib/zod-schemas/versus";
+import { log } from "@lib/helpers";
 import prisma from "@lib/prisma";
-import log from "@lib/log";
+import Schemas from "@lib/zod-schemas/versus";
 
-export async function postVote({ pid, uid, oid }: Versus.PostVoteArgs) {
- const post = validatePostVote({ pid, uid, oid });
-
+export async function postVote(args: SchemaTypes["PostVersusVote"]) {
  try {
-  await prisma.promptOptionVote.create({
+  const { versusId, userId, optionId } = args;
+  const validated = Schemas.VersusVote.parse({ versusId, userId, optionId });
+
+  await prisma.versusOptionVote.create({
    data: {
-    user: { connect: { id: post.uid } },
-    option: { connect: { promptId_id: { promptId: post.pid, id: post.oid } } },
+    user: { connect: { id: validated.userId } },
+    option: {
+     connect: { versusId_id: { versusId: validated.versusId, id: validated.optionId } },
+    },
    },
   });
-  return true;
- } catch (error) {
-  log("PostVoteError", { error });
+ } catch (error: any) {
+  log(error.name, { error });
   throw error;
  }
 }

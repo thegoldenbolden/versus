@@ -1,325 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@mixin dark-mode {
- @media (prefers-color-scheme: dark) {
-  @content;
- }
-}
-
-@layer utilities {
- .shadow-default {
-  box-shadow: 0 0 3px rgba(0, 0, 0, .15);
-
-  @include dark-mode {
-   box-shadow: 0 0 3px rgba(255, 255, 255, .35);
-  }
- }
-
- .bg-theme {
-  @apply bg-light;
-
-  @include dark-mode {
-   @apply bg-dark;
-  }
- }
-
- .color-theme {
-  @apply text-dark;
-
-  @include dark-mode {
-   @apply text-light;
-  }
- }
-
- .toggle-opacity {
-  opacity: .5;
-
-  &:hover,
-  &:focus {
-   opacity: 1;
-  }
- }
-
- .btn-hover {
-
-  &:hover,
-  &:focus-within {
-   @apply bg-dark/5 transition-colors;
-
-   @include dark-mode {
-    @apply bg-light/10
-   }
-  }
- }
-
-}
-
-
-@layer components {
- .auth {
-  @apply flex flex-col gap-2 w-full py-4;
-
-  span {
-   @apply text-sm text-center;
-  }
-
-  .providers {
-   @apply flex flex-col gap-2 w-full;
-  }
-
-  button {
-   @apply flex justify-center items-center gap-2 py-2 text-3xl px-12 rounded-md transition-colors duration-100;
-
-
-   span {
-    @apply uppercase font-bold;
-   }
-
-   svg {
-    height: 1em;
-    width: 1em;
-   }
-
-   &.discord {
-    background: theme("colors.discord");
-    color: theme("colors.light");
-   }
-
-   &.twitter {
-    background: theme("colors.twitter");
-    color: theme("colors.light")
-   }
-
-   &.google {
-    background: theme("colors.google");
-    color: theme("colors.light");
-   }
-
-   &:hover,
-   &:focus {
-    filter: brightness(1.2);
-   }
-  }
-
-  @media (min-width: theme("screens.sm")) {
-   max-width: 75%;
-  }
- }
-
- .icon {
-  @apply h-7 w-7;
- }
-
- .icon-w-text {
-  @apply flex gap-6 py-2 rounded-full w-full px-4 items-center justify-center;
-
-
-  &.active,
-  &:hover,
-  &:focus-within {
-   @apply bg-dark/5 transition-colors;
-
-   @include dark-mode {
-    @apply bg-light/5
-   }
-  }
-
-  &.active {
-   color: theme("colors.secondary");
-
-   @include dark-mode() {
-    color: theme("colors.primary");
-   }
-  }
-
-  @media (min-width: theme("screens.sm")) {
-   @apply justify-between;
-  }
-
-  span {
-   @apply hidden;
-
-   @media (min-width: theme("screens.sm")) {
-    @apply block grow font-medium;
-   }
-  }
- }
-
- .prompt {
-  @apply w-full flex flex-col;
-  max-width: 480px;
-  width: min(100%, 480px);
-
-  .header {
-   @apply flex gap-2 py-2 items-center;
-  }
-
-  .actions,
-  .header,
-  .details {
-   @apply px-4;
-  }
-
-  .actions {
-   @apply flex gap-4 py-2;
-  }
-
-  .likes {
-   @apply text-sm;
-  }
-
-  .details {
-   @apply flex flex-col gap-2 mb-2;
-
-   .description {
-    @apply text-sm;
-
-    span {
-     @apply mr-2 font-bold text-sm;
-    }
-   }
-
-   .comments {
-    @apply max-w-full font-bold w-max text-sm toggle-opacity;
-   }
-
-   .date {
-    @apply text-xs;
-   }
-  }
-
-  .option {
-   @apply font-display text-3xl relative w-full px-4 text-white transition-opacity w-full px-4 text-white transition-opacity;
-
-   min-height: 150px;
-   background: linear-gradient(112.9deg, theme("colors.primary"), #014C57 100%);
-   text-shadow: 0 4px 4px rgba(0, 0, 0, .15);
-
-   .winner {
-    position: absolute;
-    content: "";
-    top: .2em;
-    filter: drop-shadow(3px 3px 3px rgba(0 0 0 / .75));
-    left: .2em
-   }
-
-   .votes {
-    position: absolute;
-    content: "";
-    bottom: 0.5em;
-    right: 1em;
-
-   }
-
-   &:nth-child(even) {
-    background: linear-gradient(247.1deg, #FD0D0D 0%, #6B0404 100%);
-   }
-
-   &:hover,
-   &:focus {
-    filter: brightness(1.2);
-
-    &:disabled {
-     filter: none;
-    }
-   }
-
-   &:disabled {
-    opacity: .75;
-   }
-  }
-
-  @media (min-width: theme("screens.sm")) {
-   max-width: 480px;
-   @apply shadow-default rounded-md;
-  }
- }
-
- .account-header {
-  position: relative;
-
-  &::after {
-   @apply bg-dark/25 absolute top-0 w-full;
-   position: absolute;
-   height: 50%;
-   width: 100%;
-   content: "";
-   top: 0;
-   z-index: 1;
-
-   @include dark-mode() {
-    @apply bg-light/25;
-   }
-  }
- }
-
- .support {
-  @apply p-4 flex flex-col gap-2;
-
-  h1,
-  h2 {
-   @apply font-display;
-  }
-
-  h1 {
-   @apply text-4xl;
-  }
-
-  h2 {
-   @apply text-2xl;
-  }
-
-  ol {
-   @apply flex flex-col gap-2 px-4;
-   list-style-type: decimal;
-  }
-
-  a {
-   @apply text-secondary font-bold underline;
-
-   @include dark-mode() {
-    @apply text-primary;
-   }
-  }
-
-  p {
-   @apply opacity-75;
-  }
- }
-
- .spinner {
-  @apply rounded-full border-2 border-transparent border-r-dark border-t-dark border-solid;
-  animation: spin infinite 1250ms linear;
-
-  @media (prefers-color-scheme: dark) {
-   @apply border-r-light border-t-light
-  }
-
-  @keyframes spin {
-   100% {
-    rotate: 180deg;
-    transform: rotate(180deg);
-   }
-  }
- }
-
- .skeleton {
-  @apply bg-white/25;
-
-
-  &.animate {
-   animation: infinite ease-in-out 2s alternate flash;
-
-   @keyframes flash {
-    100% {
-     @apply bg-white/75;
-    }
-   }
-  }
- }
-}
+@import "_mixins";
 
 @layer base {
 
@@ -331,20 +13,13 @@
  }
 
  html {
-  color-scheme: dark light;
+  color-scheme: light dark;
  }
 
  body {
-  padding: 0;
-  margin: 0 auto;
-  max-width: theme("screens.2xl");
   background: #fff;
-  color: theme("colors.dark");
-
-  @media (prefers-color-scheme: dark) {
-   background: #000;
-   color: theme("colors.light");
-  }
+  margin: 0 auto;
+  color: theme("colors.smoky-black");
  }
 
  a {
@@ -355,6 +30,7 @@
  button {
   border: none;
   background: transparent;
+  outline: none;
  }
 
  img,
@@ -369,18 +45,19 @@
  select {
   font: inherit;
   background: transparent;
+  position: relative;
  }
 
  label {
-  opacity: 1;
-  @apply color-theme;
+  color: theme("colors.smoky-black");
  }
 
  input,
  textarea {
+
   &::placeholder {
-   @apply color-theme;
-   opacity: .75;
+   opacity: 0.75;
+   color: theme("colors.smoky-black");
   }
 
   &:focus {
@@ -390,5 +67,157 @@
 
  :disabled {
   cursor: not-allowed;
+ }
+
+ @media (prefers-color-scheme: dark) {
+  body {
+   background: #000;
+  }
+
+  body,
+  label,
+  input::placeholder,
+  textarea::placeholder {
+   color: theme("colors.lotion");
+  }
+ }
+}
+
+@layer components {
+ .icon {
+  height: 1.75rem;
+  width: 1.75rem;
+ }
+
+ .versus {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .header {
+   gap: 0.5rem;
+   align-items: center;
+   justify-content: space-between;
+  }
+
+  .actions,
+  .header,
+  .details {
+   display: flex;
+   padding: .5rem;
+  }
+
+  .actions {
+   display: flex;
+  }
+
+  .likes {
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+  }
+
+  .details {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5rem;
+   margin-bottom: 0.5rem;
+
+   .description {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+
+    span {
+     margin-right: 0.25rem;
+     font-weight: bold;
+     font-size: inherit;
+     line-height: inherit;
+    }
+   }
+
+   .date {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: black;
+    font-weight: bold;
+    opacity: 0.75;
+
+    @include dark-mode() {
+     color: white;
+    }
+   }
+  }
+
+  .option {
+   display: flex;
+   width: 100%;
+   min-height: 144px;
+   padding: 0.5rem;
+   transition: 200ms opacity ease-in-out;
+   background: theme("backgroundImage.gradient-primary");
+   font-family: var(--bebas);
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   color: theme("colors.lotion");
+   text-align: center;
+   word-break: break-all;
+   position: relative;
+   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
+   @include fluid-type(300px, 560px, 18px, 40px);
+
+   .votes {
+    position: absolute;
+    bottom: 0.5em;
+    right: 1em;
+    display: flex;
+    gap: 0.25rem;
+    @include fluid-type(300px, 560px, 14px, 20px);
+   }
+
+   &:nth-child(odd) {
+    background: theme("backgroundImage.gradient-secondary");
+   }
+
+   &:disabled {
+    pointer-events: none;
+    filter: brightness(0.75);
+   }
+
+   &:hover,
+   &:focus {
+    filter: brightness(1.1);
+
+    &:disabled {
+     filter: brightness(0.75);
+    }
+   }
+
+
+   @media (min-width: theme("screens.sm")) {
+    .votes {
+     flex-direction: column;
+     justify-content: center;
+     gap: 0;
+    }
+   }
+
+   @media (min-height: 768px) {
+    min-height: 20vh;
+   }
+
+   @media (min-height: 800px) {
+    max-height: 100%;
+   }
+  }
+ }
+}
+
+@layer utilities {
+ .fluid-type {
+  @include fluid-type(300px, 560px, 18px, 30px);
+ }
+
+ .fluid-type-sm {
+  @include fluid-type(300px, 560px, 14px, 18px);
  }
 }

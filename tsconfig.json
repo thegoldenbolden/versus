@@ -18,13 +18,11 @@
   "baseUrl": "./src",
   "paths": {
    "@components/*": ["components/*"],
-   "@prompt/*": ["components/prompt/*"],
    "@hooks/*": ["hooks/*"],
    "@layouts/*": ["layouts/*"],
    "@lib/*": ["lib/*"],
    "@auth/*": ["pages/api/[auth]/*"],
-   "@styles/*": ["styles/*"],
-   "@types/*": ["types/*"]
+   "@styles/*": ["styles/*"]
   }
  },
  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],

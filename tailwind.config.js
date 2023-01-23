@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
+const colors = require("tailwindcss/colors");
 
 module.exports = {
  content: [
@@ -9,31 +10,47 @@ module.exports = {
  ],
  theme: {
   extend: {
-   fontFamily: {
+			fontFamily: {
     sans: ["var(--roboto)", ...defaultTheme.fontFamily.sans],
-    display: ["var(--bebas)"],
+    display: ["var(--bebas)", "var(--roboto)", ...defaultTheme.fontFamily.sans],
    },
-   screens: {
-    xs: "480px",
-    ...defaultTheme.screens,
-   },
-   spacing: {
-    vh: "min(100vh, 100dvh)",
-    vw: "min(100vw, 100dvw)",
-   },
+			screens: {
+    "xs": "475px",
+				...defaultTheme.screens
+			},
+			minWidth: ({ theme }) => ({
+				"full": "100%",
+				fit: "fit-content",
+				min: "min-content",
+				max: "max-content",
+				...theme("spacing")
+			}),
+			maxWidth: ({ theme }) => ({
+				"full": "100%",
+				fit: "fit-content",
+				min: "min-content",
+				max: "max-content",
+				...theme("spacing")
+			}),
    colors: {
     discord: "#5865f2",
     twitter: "#1DA1F2",
     google: "#de5246",
-    dark: "#0c0c0c",
-    light: "#fcfcfc",
-    primary: "#59E6F9",
-    secondary: "#FD0D0D",
+    "primary": colors.red[500],
+    "secondary": colors.blue[500],
+    "lotion": "#fcfcfc",
+    "lotion-semi-opaque": "rgb(252 252 252 / 0.75)",
+    "lotion-translucent": "rgb(252 252 252 / 0.15)",
+    "smoky-black": "#0c0c0c",
+    "smoky-black-translucent": "rgb(12 12 12 / 0.05)",
+    "smoky-black-semi-opaque": "rgb(12 12 12 / 0.70)",
    },
-   gridTemplateColumns: {
-    explore: "repeat(auto-fit, minmax(min(100%, 300px), 300px))",
-   },
+			backgroundImage: {
+    "gradient-primary": `linear-gradient(to right, ${colors.red[500]}, ${colors.red[900]})`,
+				"gradient-secondary": `linear-gradient(to right, ${colors.blue[500]}, ${colors.blue[900]})`
+			}
   },
  },
- plugins: [],
+
+ plugins: [require("@headlessui/tailwindcss")],
 };

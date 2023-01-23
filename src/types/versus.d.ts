@@ -6,11 +6,12 @@ declare namespace Versus {
 
 	interface Author {
 		name: string;
+		username: string | null;
 		image: string | null;
 	}
 
- interface Prompt extends Base {
-		number: number;
+ interface Versus extends Base {
+		id: number;
   title: string;
   description: string | null;
   likes: number;
@@ -45,20 +46,20 @@ declare namespace Versus {
 			"Violence");
 
 	interface ArgsBase {
-		pid: string;
-		uid: string;
+		versusId: number;
+		userId: string;
 	}
 
 	interface PostLikeArgs extends ArgsBase {
-		type: "comment" | "prompt",
-		cid?: string;
+		type: "comment" | "versus",
+		commentId?: string;
 	}
 
 	interface PostVoteArgs extends ArgsBase {
-		oid: string;
+		optionId: string;
 	}
 
-	interface PostPromptArgs extends Omit<ArgsBase, "pid"> {
+	interface PostVersusArgs extends Omit<ArgsBase, "versusId"> {
 		title: string;
 		description: string;
 		tags: number[]
@@ -71,13 +72,13 @@ declare namespace Versus {
 	}
 
 	interface GetCommentArgs extends ArgsBase {
-  uid?: string;
+  userId?: string;
 		root?: string;
 		cursor?: string;
 	}
 
-	interface GetPromptArgs extends ArgsBase {
-		uid?: string;
+	interface GetVersusArgs extends ArgsBase {
+		userId?: string;
 		take: string | number;
 		status?: "APPROVED" | "REJECTED" | "PENDING",
   q?: string; // Can be title, or options
@@ -88,13 +89,31 @@ declare namespace Versus {
 		recent?: "asc" | "desc"
 	}
 
+	interface AxiosResponse {
+		ok: boolean;
+		status: number;
+	}
 
-	type CreatePrompt = (data: PostPromptArgs) => Promise<number | undefined>;
-	type GetManyPrompts = (data: Omit<GetPromptArgs, "pid">) => Promise<Versus.Prompt[]>;
-	type DeletePrompt = (pid: string, uid: string) => Promise<void>;
+	interface ResponseData<Type> extends AxiosResponse {
+		data: Type;
+	}
 
-	type CreateComment = (pid: string, uid: string, message: string, parentId?: string) => Promise<Comment | null>;
-	type GetComments = (pid: string, uid?: string, cid?: string, cursor?: string) => Promise<Comment[]>;
-	type GetReplies = (pid: string, parentId: string, uid?: string, cursor?: string) => Promise<Comment[]>;
-	type DeleteComment = (cid: string, uid: string) => Promise<void>;
+	interface ResponsePagination<Type> extends AxiosResponse {
+		items: Type[];
+		pagination: {	cursor: number | null }
+	};
+
+type MutateFeed<Type = (Versus | Comment)> = {
+ pages: ResponsePagination<Type>[];
+ pageParams: any[];
+};
+
+	type CreateVersus = (data: PostVersusArgs) => Promise<number | undefined>;
+	type GetManyVersus = (data: Omit<GetVersusArgs, "versusId">) => Promise<Versus.Versus[]>;
+	type DeleteVersus = (versusId: string, userId: string) => Promise<void>;
+	type CreateComment = (versusId: string, userId: string, message: string, parentId?: string) => Promise<Comment | null>;
+	type GetComments = (versusId: string, userId?: string, commentId?: string, cursor?: string) => Promise<Comment[]>;
+	type GetReplies = (versusId: string, parentId: string, userId?: string, cursor?: string) => Promise<Comment[]>;
+	type DeleteComment = (commentId: string, userId: string) => Promise<void>;
+
 }

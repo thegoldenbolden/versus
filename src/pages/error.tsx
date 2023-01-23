@@ -1,11 +1,11 @@
-import RootLayout from "@layouts/root";
 import Head from "next/head";
+import Link from "next/link";
 
 const Page = () => {
  return (
   <>
    <Head>
-    <title>Uh oh</title>
+    <title>Internal Server Error </title>
     <meta charSet="UTF-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,10 +18,14 @@ const Page = () => {
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Oops" />
    </Head>
-   <div className="w-full h-vh">An error happened. D:</div>;
+   <main className="grid w-screen h-screen place-items-center place-content-center">
+    <h1 className="text-3xl font-display">Internal Server Error</h1>
+    <Link className="text-base underline hover:font-bold focus:font-bold" href="/">
+     Back to Home
+    </Link>
+   </main>
   </>
  );
 };
 
-Page.getLayout = (page: React.ReactNode) => <RootLayout>{page}</RootLayout>;
 export default Page;

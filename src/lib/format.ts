@@ -20,23 +20,3 @@ export const formatNumber = (num: number) => {
 export const formatPlural = (text: string, num: number) => {
  return `${text}${num === 1 ? "" : "s"}`;
 };
-
-export const formatQuery = (params: any = {}) => {
- const query = [];
- Object.entries(params).forEach(([key, value]) => {
-  if (!value) return;
-
-  // TODO: check elements are string, boolean, or number
-  if (Array.isArray(value)) {
-   query.push(`${key}=${value.join(",")}`);
-   return;
-  }
-
-  if (!["string", "boolean", "number"].includes(typeof value)) return;
-  query.push(`${key}=${value}`);
- });
-
- return Object.entries(params)
-  .map(([key, value]) => `${key}=${value}`)
-  .join("&");
-};
