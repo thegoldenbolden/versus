@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Schemas, { Description, Options, SchemaTypes, Title } from "@lib/zod-schemas/versus";
 import { postRequest } from "@lib/make-requests";
 import CONFIG from "@lib/versus/config";
+import { versusKeys } from "@lib/versus/queries";
 
 import { ICheckmarkFill } from "../ui/icons";
 import Spinner from "../loading/spinner";
@@ -49,7 +50,7 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
    return response.data.ok ? response.data.data : null;
   },
   onSuccess: () => {
-   queryClient.invalidateQueries({ queryKey: ["versus"] });
+   queryClient.invalidateQueries({ queryKey: versusKeys.all });
    dispatch({ type: "reset" });
   },
  });

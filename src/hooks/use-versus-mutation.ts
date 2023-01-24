@@ -1,41 +1,37 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 import CustomError from "@lib/error";
 import { log } from "@lib/helpers";
 import { deleteRequest, postRequest } from "@lib/make-requests";
 import Schemas from "@lib/zod-schemas/versus";
-import { optimisticVote, optimisticDelete, optimisticLike } from "@lib/versus/optimistic";
+import Optimistic from "@lib/versus/optimistic";
 
 import type { SchemaTypes } from "@lib/zod-schemas/versus";
+import { versusKeys } from "@lib/versus/queries";
 
-export function useVersusMutation(query: Query = {}, redirect: boolean) {
- const { data: session, status } = useSession();
- const router = useRouter();
+export function useVersusMutation(redirect?: Function) {
+ const { data: session } = useSession();
  const queryClient = useQueryClient();
  const userId = session?.user.id;
 
  return useMutation({
-  mutationFn: async (variables: MutationVariables) => {
-   const { mutate, versusId } = variables;
+  mutationFn: async ({ type, optionId, versusId, userLikes }: MutationVariables) => {
    // prettier-ignore
-   if (!mutate || !versusId) throw new Error("A mutate request type and a versus id is required.");
-   let url = "/api/versus/" + versusId;
+   if (!type || !versusId) throw new Error("A mutate request type and a versus id is required.");
 
-   switch (mutate) {
+   const url = `/api/versus/${versusId}`;
+   switch (type) {
     default:
      throw new Error("Invalid Mutate Request");
-    case "Delete":
-     if (status === "unauthenticated") return null;
+    case "remove":
+     if (!userId) throw new CustomError(401);
      const deleted = await deleteRequest<SchemaTypes["DeleteVersusOrComment"]>(url);
      return deleted.data.ok ? deleted.data.data : null;
-    case "Like":
+    case "like":
      if (!userId) throw new CustomError(401);
-     const likeUrl = url + "/likes";
-     const { userLikes } = variables;
+     const likeUrl = `${url}/likes`;
      if (userLikes) {
-      type DeleteRequest = Versus.ResponseData<SchemaTypes["DeleteVersusOrComment"]>;
       const removed = await deleteRequest<Versus.ResponseData<DeleteRequest>>(likeUrl);
       return removed.data.ok ? removed.data.data : null;
      }
@@ -49,13 +45,12 @@ export function useVersusMutation(query: Query = {}, redirect: boolean) {
       parsedLike.data
      );
      return like.data.ok ? like.data.data : null;
-    case "Vote":
+    case "vote":
      if (!userId) return null;
-     const { optionId } = variables;
      const parsedVote = Schemas.VersusVote.safeParse({ optionId, userId, versusId });
      if (!parsedVote.success) return null;
 
-     const voteUrl = url + "/votes/" + optionId;
+     const voteUrl = `${url}/votes/${optionId}`;
      const vote = await postRequest<SchemaTypes["PostVersusVote"]>(
       voteUrl,
       parsedVote.data
@@ -63,103 +58,57 @@ export function useVersusMutation(query: Query = {}, redirect: boolean) {
      return vote.data.ok ? vote.data.data : null;
    }
   },
-  onMutate: async (variables) => {
-   // Should cancel all pending queries that start with 've rsus'
-   await queryClient.cancelQueries(["versus"]);
-   let { versusId } = variables;
+  onMutate: async ({ type, userLikes, versusId, optionId }) => {
+   await queryClient.cancelQueries(versusKeys.all);
    versusId = versusId.toString();
-   // Optimistic Updates
-   const { mutate } = variables;
-   switch (mutate) {
+
+   const lists = queryClient.getQueriesData(versusKeys.lists());
+   const versus = queryClient.getQueryData(versusKeys.detail(versusId));
+
+   Optimistic[type](queryClient, versusId, optionId);
+   return { lists, versus };
+  },
+  onError: (error, variables, context) => {
+   let { type, versusId } = variables;
+   versusId = versusId.toString();
+
+   switch (type) {
     default:
      throw new Error("Invalid Mutate Request");
-    case "Delete":
-     return optimisticDelete(queryClient, versusId);
-    case "Like":
-     return optimisticLike(queryClient, versusId);
-    case "Vote":
-     const { optionId } = variables;
-     if (!optionId) throw new Error("An option id is requried to update cache.");
-     return optimisticVote(queryClient, versusId, optionId);
+    case "remove":
+    case "like":
+     context?.lists && queryClient.setQueriesData(versusKeys.lists(), context.lists);
+     // prettier-ignore
+     context?.versus && queryClient.setQueryData(versusKeys.detail(versusId), context.versus);
+     break;
    }
   },
-  onSettled: (data, error, variables, context) => {
-   const { mutate } = variables;
-   let { versusId } = variables;
+  onSuccess: (data, variables, context) => {
+   let { type, versusId } = variables;
    versusId = versusId.toString();
-
-   if (error) {
-    if (context?.queries) {
-     switch (mutate) {
-      default:
-       throw new Error("Invalid Mutate Request");
-      case "Delete":
-      case "Like":
-       context.queries.forEach(([query, snapshot]) => {
-        queryClient.setQueryData(query, snapshot);
-       });
-       break;
-      case "Vote":
-       // Chose not to invalidate query everytime the button is clicked in feed.
-       // Authenticated and unauthenticated users should see the optimistic version.
-       // So don't revert back to snapshot.
-       break;
-     }
-    }
-   }
-
-   switch (mutate) {
-    default:
-     throw new Error("Invalid Mutate Request");
-    case "Delete":
-     queryClient.invalidateQueries(["versus"]);
-     redirect && router.push("/");
+   switch (type) {
+    case "remove":
+     // Only remove query for single versus
+     queryClient.removeQueries(versusKeys.detail(versusId));
+     redirect && redirect();
      break;
-    case "Like":
-     // Invalidate specific versus query if exists
-     queryClient.invalidateQueries(["versus", { versusId }]);
-
-     type Data = Versus.Versus;
-     // Should invalidate all queries where the versus is found.
-     queryClient.invalidateQueries<Versus.ResponsePagination<Data>>({
-      queryKey: ["versus", query],
-      refetchPage: (lastPage, index, allPages) => {
-       const pageToRefetchIndex = allPages.findIndex((pages) => {
-        return pages.items.some((item) => item.id.toString() === versusId);
-       });
-       return pageToRefetchIndex === index;
-      },
-     });
+    case "like":
+     // Invalidate specific versus query
+     queryClient.invalidateQueries(versusKeys.detail(versusId));
      break;
-    case "Vote":
-     if (status === "authenticated") {
-      // queryClient.invalidateQueries(["versus", { versusId: variables.versusId }]);
-
-      // Invalidate all queries where the versus is found.
-      queryClient.invalidateQueries<Versus.ResponsePagination<Versus.Versus>>({
-       queryKey: ["versus", query],
-       refetchPage: (lastPage, index, allPages) => {
-        const findIndex = allPages.findIndex(
-         (pages) => pages.pagination.cursor === lastPage.pagination.cursor
-        );
-        return findIndex === index;
-       },
-      });
-      break;
-     }
    }
   },
  });
 }
 
 export type UseVersusMutation = ReturnType<typeof useVersusMutation>;
+type DeleteRequest = Versus.ResponseData<SchemaTypes["DeleteVersusOrComment"]>;
 
-type MutationRequest = "Like" | "Delete" | "Vote";
 // TODO: Fix typing for searching.
 type Query = { [key: string]: any };
-
+type MutationRequest = "like" | "remove" | "vote";
 type MutationVariables = {
- mutate: MutationRequest;
+ type: MutationRequest;
  versusId: number | string;
  userLikes?: boolean;
  optionId?: string;

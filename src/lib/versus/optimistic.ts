@@ -1,30 +1,41 @@
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryKey } from "@tanstack/react-query";
+import { versusKeys } from "./queries";
 
-export function optimisticLike(qc: QueryClient, versusId: string) {
- const queries = qc.getQueriesData<Versus.MutateFeed | Versus.Versus>(["versus"]);
+const Optimistic: OptimisicUpdates = {
+ remove(qc, versusId) {
+  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+   if (!previous) return previous;
+   return {
+    pageParams: previous.pageParams,
+    pages: previous.pages.map((page) => {
+     return {
+      ...page,
+      items: page.items.filter((item) => item.id.toString() !== versusId),
+     };
+    }),
+   };
+  });
+ },
+ like(qc, versusId) {
+  // Update single versus in cache.
+  qc.setQueryData<Versus.Versus>(versusKeys.detail(versusId), (previous) => {
+   if (!previous) return previous;
+   return {
+    ...previous,
+    userLikes: !previous.userLikes,
+    likes: previous.likes + (previous.userLikes ? -1 : 1),
+   };
+  });
 
- if (queries) {
-  queries.forEach(([query, snapshot]) => {
-   if (snapshot) {
-    snapshot = snapshot as Versus.MutateFeed;
-    if (!snapshot.pages) {
-     // Remove specific versus from query.
-     snapshot = snapshot as unknown as Versus.Versus;
-     if (snapshot.id.toString() === versusId) {
-      qc.setQueryData(query, {
-       ...snapshot,
-       userLikes: !snapshot.userLikes,
-       likes: snapshot.likes + (snapshot.userLikes ? -1 : 1),
-      });
-     }
-     return;
-    }
-
-    qc.setQueryData(query, {
-     pageParams: snapshot.pageParams,
-     pages: snapshot.pages.map((snap) => ({
-      ...snap,
-      items: snap.items.map((item) => {
+  // Update all feeds where versus is included.
+  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+   if (!previous) return previous;
+   return {
+    pageParams: previous.pageParams,
+    pages: previous.pages.map((page) => {
+     return {
+      ...page,
+      items: page.items.map((item) => {
        if (item.id.toString() !== versusId) return item;
        return {
         ...item,
@@ -32,102 +43,57 @@ export function optimisticLike(qc: QueryClient, versusId: string) {
         likes: item.likes + (item.userLikes ? -1 : 1),
        };
       }),
-     })),
-    });
-   }
-  });
- }
-
- return { queries };
-}
-
-export function optimisticDelete(qc: QueryClient, versusId: string) {
- const queries = qc.getQueriesData<Versus.MutateFeed | Versus.Versus>(["versus"]);
-
- if (queries) {
-  queries.forEach(([query, snapshot]) => {
-   if (snapshot) {
-    snapshot = snapshot as Versus.MutateFeed;
-    if (!snapshot.pages) {
-     // Remove specific versus from query.
-     snapshot = snapshot as unknown as Versus.Versus;
-     if (snapshot.id.toString() === versusId) {
-      qc.removeQueries({ queryKey: query });
-     }
-     return;
-    }
-
-    qc.setQueryData<Versus.MutateFeed>(query, (old) => {
-     if (!old) return old;
-     return {
-      ...old,
-      pages: old.pages.map((page) => ({
-       ...page,
-       items: page.items.filter((item) => item.id.toString() !== versusId),
-      })),
      };
-    });
-   }
+    }),
+   };
   });
- }
+ },
+ vote(qc, versusId, optionId) {
+  // Update single versus cache
+  qc.setQueryData<Versus.Versus>(versusKeys.detail(versusId), (previous) => {
+   if (!previous) return previous;
+   return {
+    ...previous,
+    userCanVote: false,
+    options: previous.options.map((option) => {
+     if (option.id !== optionId) return option;
+     return { ...option, votes: option.votes + 1 };
+    }),
+   };
+  });
 
- return { queries };
-}
-
-export function optimisticVote(qc: QueryClient, versusId: string, optionId: string) {
- const queries = qc.getQueriesData<Versus.MutateFeed<Versus.Versus> | Versus.Versus>([
-  "versus",
- ]);
-
- if (queries) {
-  optionId = optionId.toString();
-
-  queries.forEach(([query, snapshot]) => {
-   if (snapshot) {
-    snapshot = snapshot as Versus.MutateFeed<Versus.Versus>;
-    if (!snapshot.pages) {
-     snapshot = snapshot as unknown as Versus.Versus;
-     // Remove specific versus from query.
-     if (snapshot.id.toString() === versusId) {
-      qc.setQueryData<Versus.Versus>(["versus", { versusId }], (old) => {
-       if (!old) return old;
-
+  // Update all feeds where versus is included.
+  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+   if (!previous) return previous;
+   return {
+    pageParams: previous.pageParams,
+    pages: previous.pages.map((page) => {
+     return {
+      ...page,
+      items: page.items.map((item) => {
+       if (item.id.toString() !== versusId) return item;
        return {
-        ...old,
+        ...item,
         userCanVote: false,
-        options: old.options.map((option) => {
-         if (option.id.toString() !== optionId) return option;
-         return { ...option, votes: option.votes + 1 };
+        options: item.options.map((option) => {
+         if (optionId !== option.id) return option;
+         return {
+          ...option,
+          votes: option.votes + 1,
+         };
         }),
        };
-      });
-     }
-     return;
-    }
-
-    qc.setQueryData<Versus.MutateFeed<Versus.Versus>>(query, (old) => {
-     if (!old) return old;
-     return {
-      pageParams: old.pageParams,
-      pages: old.pages.map((page) => ({
-       ...page,
-       items: page.items.map((item) => {
-        if (item.id.toString() !== versusId) return item;
-        return {
-         ...item,
-         userCanVote: false,
-         options: item.options.map((option) => {
-          if (option.id !== optionId) return option;
-          return { ...option, votes: option.votes + 1 };
-         }),
-        };
-       }),
-      })),
+      }),
      };
-    });
-   }
+    }),
+   };
   });
- }
+ },
+};
 
- return { queries };
-}
+export default Optimistic;
+type OptimisicUpdates = {
+ remove: (qc: QueryClient, versusId: string) => unknown;
+ like: (qc: QueryClient, versusId: string) => unknown;
+ vote: (qc: QueryClient, versusId: string, optionId?: string) => unknown;
+};
