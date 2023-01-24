@@ -23,7 +23,7 @@ const Like = ({ data, mutation }: MutateData<LikeProps>) => {
    return;
   }
 
-  mutation.mutate({ userLikes, versusId, mutate: "Like" });
+  mutation.mutate({ userLikes, versusId, type: "like" });
  };
 
  return (

@@ -3,27 +3,25 @@ import { formatNumber, formatPercent, formatPlural } from "@lib/format";
 
 const Vote = ({ data, mutation }: MutateData<VoteProps>) => {
  const { versusId, option, winner, userCanVote, totalVotes } = data;
- const opacity = !userCanVote ? "opacity-100" : "opacity-0";
-
- const handleVote = () => {
-  mutation.mutate({
-   mutate: "Vote",
-   optionId: option.id,
-   versusId,
-  });
- };
+ const showVotes = !userCanVote ? "opacity-100" : "opacity-0";
 
  return (
   <button
    aria-label={option.text}
    aria-disabled={!userCanVote}
-   disabled={!userCanVote}
-   onClick={handleVote}
    className="option"
+   disabled={!userCanVote}
+   onClick={() => {
+    mutation.mutate({
+     type: "vote",
+     optionId: option.id,
+     versusId,
+    });
+   }}
   >
    <span>{option.text}</span>
    {!userCanVote && (
-    <div className={`${opacity} votes`}>
+    <div className={`${showVotes} votes`}>
      {winner && <span>🏆</span>}
      <div>
       <span>

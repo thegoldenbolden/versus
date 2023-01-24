@@ -18,9 +18,8 @@ import CustomError from "@components/ui/error";
 
 const Page: NextPageWithLayout = () => {
  const router = useRouter();
- const params = { versusId: router.query.versusId as string };
- const { data: versus, status } = useVersus(params);
- const mutation = useVersusMutation(params, true);
+ const { data: versus, status } = useVersus(router.query.versusId as string);
+ const mutation = useVersusMutation(() => router.push("/"));
 
  return (
   <>

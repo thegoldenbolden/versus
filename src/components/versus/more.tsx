@@ -10,7 +10,7 @@ export default function More(props: MutateData<Data>) {
  const { userCanDelete, versusId, commentId } = data;
 
  const opacity = mutation.isLoading ? "opacity-50" : "opacity-100";
- const handleDelete = () => mutation.mutate({ versusId, commentId, mutate: "Delete" });
+ const handleDelete = () => mutation.mutate({ versusId, commentId, type: "remove" });
 
  return (
   <>

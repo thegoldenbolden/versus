@@ -98,7 +98,7 @@ export const getManyVersus: Versus.GetManyVersus = async (args) => {
    where: { userId: userId },
   };
  }
- const versuss = await prisma.versus.findMany({
+ const versus = await prisma.versus.findMany({
   where,
   orderBy: { createdAt: "desc" },
   take: args.take,
@@ -125,8 +125,8 @@ export const getManyVersus: Versus.GetManyVersus = async (args) => {
   },
  });
 
- if (!versuss) return [];
- return versuss.map((versus) => createResponse(versus, reacted, args.userId));
+ if (!versus) return [];
+ return versus.map((versus) => createResponse(versus, reacted, args.userId));
 };
 
 export async function getVersus(_versusId: string, userId: string) {
