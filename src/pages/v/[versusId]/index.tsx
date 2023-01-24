@@ -10,9 +10,9 @@ import useVersus from "@hooks/use-versus";
 import Versus from "@components/versus";
 import NotFound from "@components/versus/not-found";
 import FallbackVersus from "@components/versus/fallback";
-import Searchbar from "@components/input/searchbar";
 import Feed from "@components/feed";
 import CustomError from "@components/ui/error";
+import Footer from "@components/ui/footer";
 
 // TODO: convert to static page and give initial data to query;
 
@@ -50,7 +50,7 @@ const Page: NextPageWithLayout = () => {
     </Feed.Items>
    </Feed.Container>
    <Feed.Sidebar>
-    <Searchbar />
+    <Footer />
    </Feed.Sidebar>
   </>
  );
