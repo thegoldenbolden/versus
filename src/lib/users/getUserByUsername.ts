@@ -1,7 +1,8 @@
+import type { Prisma } from "@prisma/client";
 import prisma from "@lib/prisma";
 
 // prettier-ignore
-type GetUserByUsername = (target: string, total: Total, sessionUserId?: string) => Promise<User | null>;
+type GetUserByUsername = (target: Prisma.UserWhereUniqueInput["username"], total: Total, sessionUserId?: string) => Promise<User | null>;
 type Total = "likedVersus" | "createdVersus" | "votedVersus";
 
 export type User = {
@@ -21,7 +22,7 @@ export type User = {
 
 const getUserByUsername: GetUserByUsername = async (username, column, sessionUserId) => {
  const user = await prisma.user.findUnique({
-  where: { username: username as string },
+  where: { username },
   select: {
    name: true,
    username: true,
