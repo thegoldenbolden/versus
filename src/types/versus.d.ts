@@ -95,7 +95,7 @@ declare namespace Versus {
 	}
 
 	interface ResponseData<Type> extends AxiosResponse {
-		data: Type;
+		[key: string]: Type;
 	}
 
 	interface ResponsePagination<Type> extends AxiosResponse {
@@ -107,6 +107,14 @@ type MutateFeed<Type = (Versus | Comment)> = {
  pages: ResponsePagination<Type>[];
  pageParams: any[];
 };
+
+// Maybe allow more filters for search
+type Query = {
+ q?: string;
+ tags?: string;
+ take?: string | number;
+ cursor?: string | number;
+}
 
 	type CreateVersus = (data: PostVersusArgs) => Promise<number | undefined>;
 	type GetManyVersus = (data: Omit<GetVersusArgs, "versusId">) => Promise<Versus.Versus[]>;
