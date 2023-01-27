@@ -1,5 +1,5 @@
-import type { QueryClient, QueryKey } from "@tanstack/react-query";
-import { versusKeys } from "./queries";
+import type { QueryClient } from "@tanstack/react-query";
+import versusKeys from "./queryKeys";
 
 const Optimistic: OptimisicUpdates = {
  remove(qc, versusId) {
