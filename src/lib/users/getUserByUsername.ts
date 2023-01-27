@@ -21,7 +21,7 @@ export type User = {
 
 const getUserByUsername: GetUserByUsername = async (username, column, sessionUserId) => {
  const user = await prisma.user.findUnique({
-  where: { username },
+  where: { username: username as string },
   select: {
    name: true,
    username: true,
