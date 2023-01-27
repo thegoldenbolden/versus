@@ -12,6 +12,29 @@ export const Title = z
  .max(CONFIG.MAX_VERSUS_TITLE_LENGTH, maxMessage("Title", CONFIG.MAX_VERSUS_TITLE_LENGTH))
  .regex(CONFIG.REGEX_TITLE, regexErrorMessage("title"));
 
+export const Username = z
+ .string()
+ .trim()
+ .min(1, { message: "Username must consist of at least one letter or number" })
+ .max(CONFIG.MAX_USERNAME_LENGTH, {
+  message: `Username must not be longer than ${CONFIG.MAX_USERNAME_LENGTH}`,
+ })
+ .regex(CONFIG.REGEX_USERNAME, {
+  message: "Username must consist of letters, numbers, underscore, or periods",
+ });
+
+export const Name = z
+ .string()
+ .trim()
+ .min(1, { message: "Name must consist of at least one letter or number" })
+ .max(CONFIG.MAX_NAME_LENGTH, {
+  message: `Name must not be longer than ${CONFIG.MAX_NAME_LENGTH}`,
+ })
+ .regex(CONFIG.REGEX_NAME, {
+  message:
+   "Name must consist of letters, numbers, underscores, apostrophes, hypen or periods",
+ });
+
 export const Options = z
  .string()
  .trim()
