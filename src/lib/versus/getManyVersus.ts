@@ -1,9 +1,11 @@
 import type { Prisma } from "@prisma/client";
+import type { Reacted } from "./createResponse";
+
 import CONFIG from "../versus/config";
 import prisma from "../prisma";
 import { log } from "../helpers";
 import { validateTags } from "./validate";
-import { createResponse, Reacted } from "./createResponse";
+import { createResponse } from "./createResponse";
 
 const getFeed: Versus.GetManyVersus = async (args) => {
  const { tags, q, userId } = args;

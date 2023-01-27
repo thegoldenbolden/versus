@@ -1,4 +1,5 @@
-import { useState, FormEventHandler } from "react";
+import type { FormEventHandler } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import { ISearchLine } from "../ui/icons";

@@ -1,7 +1,8 @@
 import type { User } from "@lib/users/getUserByUsername";
+import type { FC } from "react";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 

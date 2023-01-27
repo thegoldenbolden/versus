@@ -1,8 +1,9 @@
-import CONFIG from "@lib/versus/config";
+import { useRouter } from "next/router";
 import { useInfiniteQuery } from "@tanstack/react-query";
+
+import CONFIG from "@lib/versus/config";
 import { getRequest } from "@lib/make-requests";
 import versusKeys from "@lib/versus/queryKeys";
-import { useRouter } from "next/router";
 
 type GetFeed = Versus.ResponsePagination<Versus.Versus>;
 export default function useFeed() {

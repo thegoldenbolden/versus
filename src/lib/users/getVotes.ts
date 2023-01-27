@@ -1,7 +1,8 @@
 import type { Prisma } from "@prisma/client";
+import type { Reacted } from "@lib/versus/createResponse";
 import prisma from "@lib/prisma";
 
-import { createResponse, Reacted } from "@lib/versus/createResponse";
+import { createResponse } from "@lib/versus/createResponse";
 import CONFIG from "@lib/versus/config";
 
 // TODO: add return type;

@@ -1,9 +1,9 @@
 import type { NextPageWithLayout } from "pages/_app";
 import type { GetServerSideProps } from "next";
+import type { User } from "@lib/users/getUserByUsername";
 
-import getUserByUsername, { User } from "@lib/users/getUserByUsername";
+import getUserByUsername from "@lib/users/getUserByUsername";
 import getUser from "@lib/get-user";
-
 import RootLayout from "@layouts/root";
 import Profile from "@components/user/profile";
 

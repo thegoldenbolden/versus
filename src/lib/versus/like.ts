@@ -1,5 +1,4 @@
 import type { SchemaTypes } from "@lib/zod-schemas/versus";
-import { log } from "@lib/helpers";
 import prisma from "@lib/prisma";
 import CustomError from "@lib/error";
 import Schemas from "@lib/zod-schemas/versus";

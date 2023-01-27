@@ -3,8 +3,6 @@ import withApiHandler from "@lib/with-api-handler";
 import CustomError from "@lib/error";
 import patchUserName from "@lib/users/patchUserName";
 import { ZodError } from "zod";
-import { options } from "../../[auth]/[...nextauth]";
-import { Username } from "@lib/zod-schemas/versus";
 
 export default withApiHandler(async (req, versusId, sessionUserId) => {
  switch (req.method) {

@@ -1,5 +1,6 @@
+import type { FC, PropsWithChildren } from "react";
+import { Profiler as ReactProfiler } from "react";
 import { log } from "@lib/helpers";
-import { FC, Profiler as ReactProfiler, PropsWithChildren } from "react";
 
 const Profiler: FC<PropsWithChildren & { id: string }> = (props) => {
  return (
