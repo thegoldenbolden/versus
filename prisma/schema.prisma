@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+  MODERATOR
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("userId")
@@ -41,7 +47,7 @@ model Session {
 model User {
   id              String             @id @unique @default(cuid())
   name            String?
-		username								String?
+		username								String?            @unique
   image           String?
   email           String?            @unique
   emailVerified   DateTime?          @map("emailVerified")
@@ -51,18 +57,23 @@ model User {
   accounts        Account[]
   sessions        Session[]
   likedComments   CommentLike[]
-  likedVersus    VersusLike[]
-  votedVersus    VersusOptionVote[]
-  createdVersus  Versus[]
+  likedVersus     VersusLike[]
+  votedVersus     VersusOptionVote[]
+  createdVersus   Versus[]
   createdComments Comment[]
+		followers       Follows[] @relation("following")
+		following       Follows[] @relation("follower")
 
   @@map(name: "users")
 }
 
-enum Role {
-  ADMIN
-  USER
-  MODERATOR
+model Follows {
+	follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+	following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+	followerId String
+	followingId String
+	createdAt   DateTime  @default(now())
+	@@unique([followerId, followingId])
 }
 
 model Versus {
