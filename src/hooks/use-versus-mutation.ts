@@ -1,37 +1,36 @@
+import type { SchemaTypes } from "@lib/zod-schemas/versus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
-import CustomError from "@lib/error";
-import { log } from "@lib/helpers";
 import { deleteRequest, postRequest } from "@lib/make-requests";
-import Schemas from "@lib/zod-schemas/versus";
 import Optimistic from "@lib/versus/optimistic";
+import versusKeys from "@lib/versus/queryKeys";
+import Schemas from "@lib/zod-schemas/versus";
+import CustomError from "@lib/error";
 
-import type { SchemaTypes } from "@lib/zod-schemas/versus";
-import { versusKeys } from "@lib/versus/queries";
-
-export function useVersusMutation(redirect?: Function) {
+export default function useVersusMutation(redirect?: Function) {
  const { data: session } = useSession();
  const queryClient = useQueryClient();
  const userId = session?.user.id;
 
  return useMutation({
-  mutationFn: async ({ type, optionId, versusId, userLikes }: MutationVariables) => {
+  mutationFn: async ({ type, versusId, userLikes, optionId }: MutationVariables) => {
    // prettier-ignore
    if (!type || !versusId) throw new Error("A mutate request type and a versus id is required.");
+   const versusUrl = `/api/versus/${versusId}`;
 
-   const url = `/api/versus/${versusId}`;
    switch (type) {
     default:
-     throw new Error("Invalid Mutate Request");
+     throw new Error("Invalid Mutation Type");
     case "remove":
      if (!userId) throw new CustomError(401);
-     const deleted = await deleteRequest<SchemaTypes["DeleteVersusOrComment"]>(url);
+     const deleted = await deleteRequest<SchemaTypes["DeleteVersusOrComment"]>(versusUrl);
      return deleted.data.ok ? deleted.data.data : null;
     case "like":
      if (!userId) throw new CustomError(401);
-     const likeUrl = `${url}/likes`;
+     const likeUrl = versusUrl + "/likes";
      if (userLikes) {
+      type DeleteRequest = Versus.ResponseData<SchemaTypes["DeleteVersusOrComment"]>;
       const removed = await deleteRequest<Versus.ResponseData<DeleteRequest>>(likeUrl);
       return removed.data.ok ? removed.data.data : null;
      }
@@ -49,8 +48,7 @@ export function useVersusMutation(redirect?: Function) {
      if (!userId) return null;
      const parsedVote = Schemas.VersusVote.safeParse({ optionId, userId, versusId });
      if (!parsedVote.success) return null;
-
-     const voteUrl = `${url}/votes/${optionId}`;
+     const voteUrl = `${versusUrl}/votes/${optionId}`;
      const vote = await postRequest<SchemaTypes["PostVersusVote"]>(
       voteUrl,
       parsedVote.data
@@ -58,13 +56,12 @@ export function useVersusMutation(redirect?: Function) {
      return vote.data.ok ? vote.data.data : null;
    }
   },
-  onMutate: async ({ type, userLikes, versusId, optionId }) => {
-   await queryClient.cancelQueries(versusKeys.all);
+  onMutate: async ({ type, optionId, versusId }) => {
+   await queryClient.cancelQueries({ queryKey: versusKeys.all });
    versusId = versusId.toString();
 
    const lists = queryClient.getQueriesData(versusKeys.lists());
    const versus = queryClient.getQueryData(versusKeys.detail(versusId));
-
    Optimistic[type](queryClient, versusId, optionId);
    return { lists, versus };
   },
@@ -95,6 +92,7 @@ export function useVersusMutation(redirect?: Function) {
     case "like":
      // Invalidate specific versus query
      queryClient.invalidateQueries(versusKeys.detail(versusId));
+     queryClient.invalidateQueries(versusKeys.list({ type: "likes" }));
      break;
    }
   },
@@ -102,12 +100,9 @@ export function useVersusMutation(redirect?: Function) {
 }
 
 export type UseVersusMutation = ReturnType<typeof useVersusMutation>;
-type DeleteRequest = Versus.ResponseData<SchemaTypes["DeleteVersusOrComment"]>;
 
-// TODO: Fix typing for searching.
-type Query = { [key: string]: any };
-type MutationRequest = "like" | "remove" | "vote";
-type MutationVariables = {
+export type MutationRequest = "like" | "remove" | "vote";
+export type MutationVariables = {
  type: MutationRequest;
  versusId: number | string;
  userLikes?: boolean;
