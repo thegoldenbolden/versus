@@ -4,6 +4,13 @@ import axios from "axios";
 // Headers became required with axios update.
 type Config = Partial<AxiosRequestConfig>;
 
+export async function patchRequest<Type>(url: string, data: Type, config?: Config) {
+ return await axios.patch<Versus.ResponseData<Type>>(url, data, {
+  ...config,
+  method: "PATCH",
+ });
+}
+
 export async function postRequest<Type>(url: string, data: Type, config?: Config) {
  return await axios.post<Versus.ResponseData<Type>>(url, data, {
   ...config,

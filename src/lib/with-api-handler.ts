@@ -19,6 +19,7 @@ const withApiHandler = (handler: WithNextApiHandler) => {
 
    log("Request", {
     requestedBy: userId,
+    referer: req.headers.referer,
     method: req.method,
     url: req.url,
     params: { query: req.query, body: req.body },
@@ -34,6 +35,10 @@ const withApiHandler = (handler: WithNextApiHandler) => {
      if (!userId) throw new CustomError(401);
      response = await handler(req, versusId, userId);
      return res.status(201).send({ ...response, status: 201, ok: true });
+    case "PATCH":
+     if (!userId) throw new CustomError(401);
+     response = await handler(req, versusId, userId);
+     return res.status(201).send({ ...response, status: 201, ok: true });
     case "DELETE":
      if (!userId) {
       throw new CustomError(404);
@@ -43,7 +48,7 @@ const withApiHandler = (handler: WithNextApiHandler) => {
      return res.status(200).send({ status: 200, ok: true });
    }
   } catch (error: any) {
-   log(error.name ?? "Error", error);
+   log(error?.name ?? "Error", error);
 
    if (error instanceof CustomError) {
     res
