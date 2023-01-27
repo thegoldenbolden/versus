@@ -18,7 +18,7 @@ const Avatar = (props: AvatarProps) => {
    alt="avatar"
    height={image.height ?? 32}
    width={image.width ?? 32}
-   className={`block aspect-square ${image.rounded}`}
+   className={image.rounded}
   />
  );
 };

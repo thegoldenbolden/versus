@@ -4,7 +4,7 @@ import CONFIG from "@lib/versus/config";
 export default function Tags({ tags }: { tags: number[] }) {
  if (!tags || tags.length === 0) return null;
  return (
-  <div className="flex flex-wrap gap-2 text-xs font-bold">
+  <div className="flex flex-wrap gap-2 font-bold">
    {tags.map((tag) => {
     const t = CONFIG.TAGS.find((t) => t.id === tag);
     if (!t) return null;

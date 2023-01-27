@@ -37,7 +37,7 @@ export default function Create({ className, overrideClass }: CreateProps) {
     className={
      overrideClass
       ? className
-      : `flex items-center justify-center p-2 rounded-sm font-display text-lotion bg-primary dark:bg-secondary dark:text-smoky-black hover:opacity-90 active:opacity-90 focus:opacity-90`
+      : `flex items-center justify-center p-2 rounded-sm font-display btn-primary hover:opacity-90 active:opacity-90 focus:opacity-90`
     }
     type="button"
     onClick={openModal}

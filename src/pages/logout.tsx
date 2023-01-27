@@ -23,7 +23,9 @@ const Page = () => {
     <meta name="description" content="Sign out of Versus Zero" />
    </Head>
    <div className="flex flex-col gap-2">
-    <span className="px-6 text-sm max-w-screen">Come back soon!</span>
+    <span className="px-6 text-sm min-w-[250px] text-center max-w-screen">
+     Come back soon!
+    </span>
     <div className="flex flex-col items-center gap-2 text-lotion justify-evenly">
      <Logout />
     </div>

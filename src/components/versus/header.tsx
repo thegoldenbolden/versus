@@ -6,7 +6,7 @@ import More from "./more";
 export default function Header({ data: versus, mutation }: MutateData<Data>) {
  const Author = versus.author.username ? (
   <Link
-   className="font-bold truncate outline-none opacity-75 hover:opacity-100 focus:opacity-100 hover:underline focus:underline"
+   className="font-bold truncate outline-none hover:underline focus:underline"
    href={`/${versus.author.username}`}
   >
    {versus.author.name}
@@ -18,7 +18,7 @@ export default function Header({ data: versus, mutation }: MutateData<Data>) {
  const Title = versus.id && (
   <Link
    href={`/v/${versus.id}`}
-   className="truncate outline-none opacity-75 hover:opacity-100 focus:opacity-100 hover:underline focus:underline"
+   className="truncate outline-none hover:underline focus:underline"
   >
    {versus.title}
   </Link>

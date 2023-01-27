@@ -26,11 +26,11 @@ const Privacy: NextPageWithLayout = () => {
      <section className="flex flex-col gap-2 px-2 py-8">
       <div>
        <h1 className="text-3xl font-display">Privacy Policy</h1>
-       <div className="text-sm font-bold opacity-75">
+       <div className="text-xs font-bold opacity-75">
         Last Updated: <time dateTime="2023-01-18">January 18, 2023</time>
        </div>
       </div>
-      <p className="opacity-90">
+      <p className="text-sm opacity-90">
        We at Versus Zero value your privacy and take great care in protecting it. This
        privacy policy explains how we collect, use, and share personal information about
        you when you use our website and online services. Please read this policy carefully
@@ -41,7 +41,7 @@ const Privacy: NextPageWithLayout = () => {
       <h2 className="text-2xl font-bold opacity-100 font-display">
        Information We Collect
       </h2>
-      <p>
+      <p className="text-sm">
        We collect personal information about you when you provide it to us directly, such
        as when you create an account. The personal information we collect may include your
        name, or email address. We may also collect information about your use of our
@@ -55,16 +55,16 @@ const Privacy: NextPageWithLayout = () => {
        How We Use Your Information
       </h2>
       <div className="flex flex-col gap-2">
-       <p>
+       <p className="text-sm">
         We use the personal information we collect about you for various purposes,
         including:
        </p>
-       <ol className="list-[square] px-4">
+       <ol className="list-[square] px-4 text-sm">
         <li>To provide user support and assistance</li>
         <li>To personalize your experience on our website</li>
         <li>To improve the quality of our website and services</li>
        </ol>
-       <p>
+       <p className="text-sm">
         To access certain features of the Services, you may need to create an account. You
         are responsible for maintaining the confidentiality of your account login
         information and for all activities that occur under your account. You agree to
@@ -77,11 +77,11 @@ const Privacy: NextPageWithLayout = () => {
        Sharing Your Information
       </h2>
       <div className="flex flex-col gap-2">
-       <p>
+       <p className="text-sm">
         We may share your personal information with third parties in certain
         circumstances, such as:
        </p>
-       <ol className="list-[square] px-4">
+       <ol className="list-[square] px-4 text-sm">
         <li>
          With service providers who perform services on our behalf, such as payment
          processors and fulfillment centers
@@ -92,7 +92,7 @@ const Privacy: NextPageWithLayout = () => {
         </li>
         <li>In the event that we are acquired by or merged with another company</li>
        </ol>
-       <p>
+       <p className="text-sm">
         We will not sell your personal information to third parties for their own
         marketing purposes.
        </p>
@@ -100,7 +100,7 @@ const Privacy: NextPageWithLayout = () => {
      </section>
      <section className="px-2 py-8 opacity-90">
       <h2 className="text-2xl font-bold opacity-100 font-display">Data Security</h2>
-      <p>
+      <p className="text-sm">
        We take steps to protect your personal information from unauthorized access, use,
        or disclosure. We use secure servers, encryption, and other security measures to
        protect your personal information.
@@ -110,7 +110,7 @@ const Privacy: NextPageWithLayout = () => {
       <h2 className="text-2xl font-bold opacity-100 font-display">
        Your Rights and Choices
       </h2>
-      <p>
+      <p className="text-sm">
        You have the right to access, correct, or delete your personal information at any
        time. You can also opt out of receiving promotional materials from us by following
        the unsubscribe instructions in the emails we send you.
@@ -120,7 +120,7 @@ const Privacy: NextPageWithLayout = () => {
       <h2 className="text-2xl font-bold opacity-100 font-display">
        Changes to this Privacy Policy
       </h2>
-      <p>
+      <p className="text-sm">
        We may update this privacy policy from time to time. If we make any changes, we
        will post the updated policy on this page and update the effective date. We
        encourage you to review this policy regularly to stay informed about our privacy
@@ -129,7 +129,7 @@ const Privacy: NextPageWithLayout = () => {
      </section>
      <section className="px-2 py-8 opacity-90">
       <h2 className="text-2xl font-bold opacity-100 font-display">Contact Us</h2>
-      <p>
+      <p className="text-sm">
        If you have any questions or concerns about our privacy policy or the handling of
        your personal information, please contact&nbsp;
        <a

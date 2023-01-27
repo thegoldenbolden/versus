@@ -11,17 +11,14 @@ const Feed: FeedType = {
  },
  Items: (props) => {
   return (
-   <div
-    id="feed"
-    className="flex flex-col items-center w-full min-h-screen divide-y divide-smoky-black-translucent dark:divide-lotion-translucent"
-   >
+   <div id="feed" className="flex flex-col items-center w-full min-h-screen">
     <ErrorBoundary>{props.children}</ErrorBoundary>
    </div>
   );
  },
  Sidebar: (props) => {
   return (
-   <div className="sticky top-0 hidden h-min lg:block lg:p-2">
+   <div className="sticky top-0 hidden max-w-[350px] h-min lg:block lg:p-2">
     <ErrorBoundary>{props.children}</ErrorBoundary>
    </div>
   );
