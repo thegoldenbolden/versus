@@ -5,7 +5,8 @@ import p from "@lib/prisma";
 
 export default function PrismaAdapter(): Adapter {
  return {
-  createUser: (data) => p.user.create({ data, id: nanoid() }),
+  createUser: (data) =>
+   p.user.create({ data: { ...data, id: nanoid(), username: nanoid(12) } }),
   getUser: (id) => p.user.findUnique({ where: { id } }),
   getUserByEmail: (email) => p.user.findUnique({ where: { email } }),
   async getUserByAccount(provider_providerAccountId) {
