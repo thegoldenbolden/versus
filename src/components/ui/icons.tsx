@@ -10,8 +10,6 @@ export {
  RiLogoutCircleLine as ILogoutLine,
  RiHomeLine as IHomeLine,
  RiHomeFill as IHomeFill,
- // RiHeartLine as IHeartLine,
- RiHeartFill as IHeartFill,
  RiUser3Line as IUserLine,
  RiUser3Fill as IUserFill,
  RiMore2Line as IMoreLine,
@@ -20,6 +18,14 @@ export {
  RiArrowDownSLine as IArrowDownLine,
  RiPencilFill as ICreateFill,
  RiPencilLine as ICreateLine,
+ RiSettings3Line as ISettingsLine,
+ RiSettings3Fill as ISettingsFill,
+ RiArrowLeftSLine as IBackLine,
+ RiArrowLeftSFill as IBackFill,
+ RiFunctionLine as IGridLine,
+ RiFunctionFill as IGridFill,
+ RiThumbUpLine as IThumbUpLine,
+ RiThumbUpFill as IThumbUpFill,
 } from "react-icons/ri";
 
-export { HiOutlineHeart as IHeartLine } from "react-icons/hi2";
+export { HiOutlineHeart as IHeartLine, HiHeart as IHeartFill } from "react-icons/hi2";
