@@ -1,5 +1,7 @@
 import Head from "next/head";
 
+import useVersusMutation from "@hooks/use-versus-mutation";
+import useFeed from "@hooks/use-feed";
 import RootLayout from "@layouts/root";
 import Searchbar from "@components/input/searchbar";
 import VersusFeed from "@components/versus/feed";
@@ -7,6 +9,9 @@ import Feed from "@components/feed";
 import Footer from "@components/ui/footer";
 
 const Page = () => {
+ const { status, data, ...feed } = useFeed();
+ const mutation = useVersusMutation();
+
  return (
   <>
    <Head>
@@ -25,11 +30,19 @@ const Page = () => {
    </Head>
    <Feed.Container>
     <Feed.Items>
-     <VersusFeed />
+     <VersusFeed
+      status={status}
+      data={data}
+      hasNextPage={feed.hasNextPage}
+      isFetchingNextPage={feed.isFetchingNextPage}
+      fetchNextPage={feed.fetchNextPage}
+      mutation={mutation}
+     />
     </Feed.Items>
    </Feed.Container>
    <Feed.Sidebar>
     <div className="flex flex-col gap-2">
+     <Searchbar />
      <Footer />
     </div>
    </Feed.Sidebar>
