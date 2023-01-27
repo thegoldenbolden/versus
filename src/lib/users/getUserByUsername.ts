@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import prisma from "@lib/prisma";
 
 // prettier-ignore
-type GetUserByUsername = (target: Prisma.UserWhereUniqueInput["username"], total: Total, sessionUserId?: string) => Promise<User | null>;
+type GetUserByUsername = (target: any, total: Total, sessionUserId?: string) => Promise<User | null>;
 type Total = "likedVersus" | "createdVersus" | "votedVersus";
 
 export type User = {
