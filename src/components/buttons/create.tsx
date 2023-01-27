@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { ICreateLine, ICreateFill } from "../ui/icons";
 import Restricted from "../auth/restricted";
 import Spinner from "../loading/spinner";
+import useModal from "@hooks/use-modal";
 
 const CreateVersus = dynamic(() => import("../versus/create"), {
  loading: () => (
@@ -17,14 +18,7 @@ const CreateVersus = dynamic(() => import("../versus/create"), {
 
 export default function Create({ className, overrideClass }: CreateProps) {
  const { data: session } = useSession();
- const [isOpen, setIsOpen] = useState(false);
-
- const closeModal = () => {
-  setIsOpen(false);
- };
- const openModal = () => {
-  setIsOpen(true);
- };
+ const { isOpen, closeModal, openModal } = useModal();
 
  const Icon = isOpen ? ICreateFill : ICreateLine;
 

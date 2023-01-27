@@ -1,9 +1,9 @@
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 
 import type { MutateData } from "types/mutate";
 import { IHeartLine } from "../ui/icons";
 import Restricted from "../auth/restricted";
+import useModal from "@hooks/use-modal";
 
 const likeClassName =
  "fill-primary text-primary hover:text-smoky-black hover:dark:text-lotion focus:dark:text-lotion focus:text-smoky-black hover:fill-transparent focus:fill-transparent";
@@ -13,13 +13,11 @@ const unlikeClassName =
 const Like = ({ data, mutation }: MutateData<LikeProps>) => {
  const { versusId, userLikes } = data;
  const { data: session } = useSession();
- const [preventLike, setPreventLike] = useState(false);
-
- const closeModal = () => setPreventLike(false);
+ const { isOpen, closeModal, openModal } = useModal();
 
  const handleLike = () => {
   if (!session?.user.id) {
-   setPreventLike(true);
+   openModal();
    return;
   }
 
@@ -40,7 +38,7 @@ const Like = ({ data, mutation }: MutateData<LikeProps>) => {
    {!session?.user.id && (
     <Restricted
      message="Please login in to leave a like."
-     isOpen={preventLike}
+     isOpen={isOpen}
      closeModal={closeModal}
     />
    )}
