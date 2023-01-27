@@ -12,7 +12,7 @@ const Searchbar = ({ className = "" }: { className?: string }) => {
   e.preventDefault();
 
   if (value.length > 0) {
-   router.push({
+   router.replace({
     pathname: "/explore",
     query: { q: value },
    });
@@ -20,11 +20,11 @@ const Searchbar = ({ className = "" }: { className?: string }) => {
  };
 
  const defaultClass =
-  "sticky top-0 z-10 text-base flex items-center w-full gap-4 px-4 transition-colors group focus-within:bg-smoky-black-translucent focus-within:dark:bg-lotion-translucent hover:bg-smoky-black-translucent focus:bg-smoky-black-translucent hover:dark:bg-lotion-translucent focus:dark:bg-lotion-translucent";
+  "sticky rounded-sm top-0 z-10 text-base flex items-center w-full gap-4 px-4 transition-colors group focus-within:bg-smoky-black-translucent focus-within:dark:bg-lotion-translucent hover:bg-smoky-black-translucent focus:bg-smoky-black-translucent hover:dark:bg-lotion-translucent focus:dark:bg-lotion-translucent";
 
  return (
   <form className={`${defaultClass} ${className}`} onSubmit={handleSubmit}>
-   <ISearchLine className="w-6 h-6 opacity-75 group-focus-within:opacity-100" />
+   <ISearchLine className="w-5 h-5 opacity-75 group-focus-within:opacity-100" />
    <TextInput
     id="searchbar"
     className="py-4 text-base bg-transparent md:py-3 grow"
