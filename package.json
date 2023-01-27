@@ -7,6 +7,7 @@
   "start": "next start",
   "build": "next build",
   "dev": "next dev",
+  "postinstall": "prisma generate",
   "lint": "next lint"
  },
  "keywords": [],
