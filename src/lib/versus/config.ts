@@ -6,11 +6,15 @@ type VersusConfig = {
  MAX_VERSUS_DESCRIPTION_LENGTH: 768;
  MAX_VERSUS_OPTION_LENGTH: 100;
  MAX_COMMENT_LENGTH: 300;
+ MAX_USERNAME_LENGTH: 32;
+ MAX_NAME_LENGTH: 100;
 
  REGEX_DESCRIPTION: RegExp;
  REGEX_COMMENT: RegExp;
  REGEX_TITLE: RegExp;
  REGEX_OPTIONS: RegExp;
+ REGEX_USERNAME: RegExp;
+ REGEX_NAME: RegExp;
 
  TAGS: { id: number; name: Versus.Tag }[];
 };
@@ -29,6 +33,12 @@ const CONFIG: VersusConfig = {
 
  MAX_VERSUS_OPTION_LENGTH: 100,
  REGEX_OPTIONS: /^[a-zA-Z0-9\s.!?@#&:'\(\)\-\"]{1,100}$/,
+
+ MAX_USERNAME_LENGTH: 32,
+ REGEX_USERNAME: /^[a-zA-Z0-9._]{1,32}$/,
+
+ MAX_NAME_LENGTH: 100,
+ REGEX_NAME: /^[a-zA-Z0-9'\s._]{1,100}$/,
 
  TAGS: [
   { id: 1, name: "Pop Culture" },
