@@ -2,7 +2,7 @@ import { postVersus } from "@lib/versus";
 import withApiHandler from "@lib/with-api-handler";
 import CONFIG from "@lib/versus/config";
 import CustomError from "@lib/error";
-import Versus from "@lib/versus/getVersus";
+import getManyVersus from "@lib/versus/getManyVersus";
 
 // TODO: make sure pagination is being implemented properly
 export default withApiHandler(async (req, versusId, userId) => {
@@ -14,7 +14,7 @@ export default withApiHandler(async (req, versusId, userId) => {
    take = parseInt(take as string) as number;
    take = isNaN(take as number) ? CONFIG.MAX_VERSUS_PER_PAGE : (take as number);
 
-   const items = await Versus.getFeed({
+   const items = await getManyVersus({
     ...req.query,
     take: (take as number).toString(),
     userId,
