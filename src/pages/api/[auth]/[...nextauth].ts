@@ -8,7 +8,7 @@ import MyAdapter from "@lib/adapter";
 export const options: NextAuthOptions = {
  debug: process.env.NODE_ENV === "development",
  secret: process.env.NEXTAUTH_SECRET,
- pages: { signIn: "/login", signOut: "/logout" },
+ pages: { signIn: "/login", signOut: "/logout", error: "/error" },
  session: {
   strategy: "database",
   maxAge: 7 * 24 * 60 * 60,
@@ -35,6 +35,15 @@ export const options: NextAuthOptions = {
    if (!session.user?.id && user?.id) {
     session.user.id = user.id;
    }
+
+   if (user.username && !session?.user.username) {
+    session.user.username = user.username;
+   }
+
+   if (user.username && session.user.username !== user.username) {
+    session.user.username = user.username;
+   }
+
    return session;
   },
  },
