@@ -84,6 +84,29 @@
 }
 
 @layer components {
+ .btn-primary {
+  background: theme("colors.primary");
+  color: theme("colors.lotion");
+  border: 2px solid theme("colors.primary");
+  transition: background-color ease-in-out 100ms;
+
+  &:hover,
+  &:focus {
+   background: transparent;
+   color: theme("colors.primary");
+  }
+
+  @include dark-mode() {
+   background: theme("colors.secondary");
+   border: 2px solid theme("colors.secondary");
+
+   &:hover,
+   &:focus {
+    color: theme("colors.secondary");
+   }
+  }
+ }
+
  .icon {
   height: 1.75rem;
   width: 1.75rem;
@@ -121,10 +144,10 @@
    flex-direction: column;
    gap: 0.5rem;
    margin-bottom: 0.5rem;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
 
    .description {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
 
     span {
      margin-right: 0.25rem;
@@ -135,8 +158,6 @@
    }
 
    .date {
-    font-size: 0.75rem;
-    line-height: 1rem;
     color: black;
     font-weight: bold;
     opacity: 0.75;
@@ -180,18 +201,12 @@
 
    &:disabled {
     pointer-events: none;
-    filter: brightness(0.75);
    }
 
    &:hover,
    &:focus {
     filter: brightness(1.1);
-
-    &:disabled {
-     filter: brightness(0.75);
-    }
    }
-
 
    @media (min-width: theme("screens.sm")) {
     .votes {
