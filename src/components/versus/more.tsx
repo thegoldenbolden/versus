@@ -17,8 +17,7 @@ export default function More(props: MutateData<Data>) {
    {userCanDelete && versusId && (
     <Menu as="div" className="relative z-10 inline-block text-left">
      <Menu.Button
-      aria-labelledby="versus-settings"
-      aria-label="more versus actions"
+      aria-label="more actions"
       className="flex items-center justify-center px-1 py-2 rounded-full min-w-max aspect-square hover:bg-smoky-black-translucent hover:dark:bg-lotion-translucent focus:bg-smoky-black-translucent focus:dark:bg-lotion-translucent focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
      >
       <IMoreLine className="w-5 h-5 text-smoky-black dark:text-lotion" />
@@ -44,7 +43,7 @@ export default function More(props: MutateData<Data>) {
           }`}
           onClick={handleDelete}
          >
-          <IDeleteLine className="w-4 h-4 stroke-inherit" />
+          <IDeleteLine aria-label="delete icon" className="w-4 h-4 stroke-inherit" />
           <span className="text-sm">Delete</span>
          </button>
         )}

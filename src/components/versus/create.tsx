@@ -1,4 +1,3 @@
-// prettier-ignore
 import type { ChangeEventHandler, FormEventHandler } from "react";
 import { useReducer, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Schemas, { Description, Options, SchemaTypes, Title } from "@lib/zod-schemas/versus";
 import { postRequest } from "@lib/make-requests";
 import CONFIG from "@lib/versus/config";
-import { versusKeys } from "@lib/versus/queries";
+import versusKeys from "@lib/versus/queryKeys";
 
 import { ICheckmarkFill } from "../ui/icons";
 import Spinner from "../loading/spinner";
@@ -38,7 +37,6 @@ const initial: State = {
 export default function Create(props: { user: User; closeModal: CloseModal }) {
  const [{ values, errors }, dispatch] = useReducer(reducer, initial);
  const [tab, setTab] = useState(0);
-
  const queryClient = useQueryClient();
 
  const mutation = useMutation({
@@ -236,7 +234,7 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
             <button
              role="option"
              aria-selected={active}
-             aria-labelledby={`add the tag ${tag.name}`}
+             aria-labelledby={`${tag.name}`}
              title={tag.name}
              type="button"
              className={`${activeClass} hover:dark:bg-lotion-translucent hover:bg-smoky-black-translucent border-solid border-2 px-2 text-sm rounded-sm items-center flex gap-2`}
