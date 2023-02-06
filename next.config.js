@@ -8,6 +8,9 @@ const nextConfig = {
   domains: ["cdn.discordapp.com", "pbs.twimg.com", "lh3.googleusercontent.com"],
  },
  sassOptions: { includePaths: [path.join(__dirname, "styles")] },
+	experimental: {
+		appDir: true
+	}
 };
 
 module.exports = nextConfig;
