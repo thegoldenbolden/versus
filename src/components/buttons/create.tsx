@@ -1,14 +1,16 @@
-import { Fragment, useState } from "react";
+"use client";
+import type { User } from "next-auth";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+
+import useModal from "@hooks/use-modal";
 
 import { ICreateLine, ICreateFill } from "../ui/icons";
 import Restricted from "../auth/restricted";
 import Spinner from "../loading/spinner";
-import useModal from "@hooks/use-modal";
 
-const CreateVersus = dynamic(() => import("../versus/create"), {
+const VersusModal = dynamic(() => import("../versus/create"), {
  loading: () => (
   <div className="absolute flex items-center justify-center w-full h-full -z-50">
    <Spinner />
@@ -16,30 +18,19 @@ const CreateVersus = dynamic(() => import("../versus/create"), {
  ),
 });
 
-export default function Create({ className, overrideClass }: CreateProps) {
- const { data: session } = useSession();
+type CreateProps = { className?: string; user?: User };
+
+export default function Create({ className, user }: CreateProps) {
  const { isOpen, closeModal, openModal } = useModal();
-
  const Icon = isOpen ? ICreateFill : ICreateLine;
-
- // Currently class name controls whether to display Create <span />
 
  return (
   <>
-   <button
-    title="Create Versus"
-    className={
-     overrideClass
-      ? className
-      : `flex items-center justify-center p-2 rounded-sm font-display btn-primary hover:opacity-90 active:opacity-90 focus:opacity-90`
-    }
-    type="button"
-    onClick={openModal}
-   >
+   <button title="Create Versus" className={className} type="button" onClick={openModal}>
     <Icon className="w-7 h-7 xl:hidden" />
     <span className={className ? "hidden xl:inline-block" : ""}>Create</span>
    </button>
-   {!session?.user?.id ? (
+   {!user ? (
     <Restricted
      message="Please login to create a versus."
      isOpen={isOpen}
@@ -74,12 +65,12 @@ export default function Create({ className, overrideClass }: CreateProps) {
           <Dialog.Title as="h3" className="mb-4 text-4xl text-center font-display">
            Create a Versus
           </Dialog.Title>
-          <CreateVersus
+          <VersusModal
            user={{
-            id: session.user.id,
-            name: session.user.name,
-            username: session.user.username,
-            image: session.user.image,
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            image: user.image,
            }}
            closeModal={closeModal}
           />
@@ -93,5 +84,3 @@ export default function Create({ className, overrideClass }: CreateProps) {
   </>
  );
 }
-
-type CreateProps = { className?: string; overrideClass?: boolean };

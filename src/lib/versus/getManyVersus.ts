@@ -1,36 +1,35 @@
 import type { Prisma } from "@prisma/client";
-import type { Reacted } from "./createResponse";
+import type { VersusQuery } from "../../types";
+import type { Versus } from "./getVersus";
 
-import CONFIG from "../versus/config";
-import prisma from "../prisma";
-import { log } from "../helpers";
+import formatResponse from "./formatResponse";
 import { validateTags } from "./validate";
-import { createResponse } from "./createResponse";
+import CONFIG from "../versus/config";
+import { log } from "../helpers";
+import prisma from "../prisma";
 
-const getFeed: Versus.GetManyVersus = async (args) => {
- const { tags, q, userId } = args;
- args.take = parseInt(args.take as string) || CONFIG.MAX_VERSUS_PER_PAGE;
+export type GetManyVersus = (args: VersusQuery) => Promise<NonNullable<Versus>[]>;
 
- // Only use cursor if it is specified, will break 'orderBy' otherwise.
- args.cursor = parseInt(args.cursor as string);
- args.cursor = isNaN(args.cursor) ? undefined : args.cursor;
+const getManyVersus: GetManyVersus = async (args = {}) => {
+ const take = parseInt(args.take ?? "") || CONFIG.MAX_VERSUS_PER_PAGE;
+ const cursor = parseInt(args.cursor ?? "") || undefined;
 
  // Ignore versus that have been rejected.
  const where: Prisma.VersusFindManyArgs["where"] = { status: { not: "REJECTED" } };
 
  // Search titles and options for query.
  const OR: Prisma.VersusWhereInput[] = [];
- if (q && q.length > 0) {
+ if (args.q && args.q.length > 0) {
   OR.push(
-   { title: { contains: q, mode: "insensitive" } },
-   { options: { some: { text: { contains: q, mode: "insensitive" } } } }
+   { title: { contains: args.q, mode: "insensitive" } },
+   { options: { some: { text: { contains: args.q, mode: "insensitive" } } } }
   );
  }
 
  // Searches by tag ids which only exists in @lib/versus/config
- if (tags) {
-  const t: number[] = (tags as string).split(",").map((tag) => parseInt(tag));
-  args.tags = validateTags(t) as any;
+ if (args.tags) {
+  const t: number[] = args.tags.split(",").map((tag) => parseInt(tag));
+  validateTags(t);
   OR.push(...t.map((t) => ({ tags: { has: t } })));
  }
 
@@ -38,12 +37,12 @@ const getFeed: Versus.GetManyVersus = async (args) => {
  if (OR.length > 0) where.OR = OR;
 
  // Find all versus the user has voted on
- let reacted: Reacted;
+ let reacted: { select: { userId: true }; where: { userId: string } } | undefined;
 
- if (userId) {
+ if (args.userId) {
   reacted = {
    select: { userId: true },
-   where: { userId: userId },
+   where: { userId: args.userId },
   };
  }
 
@@ -58,9 +57,9 @@ const getFeed: Versus.GetManyVersus = async (args) => {
  const versus = await prisma.versus.findMany({
   where,
   orderBy: { id: "desc" },
-  take: args.take, //CONFIG.MAX_VERSUS_PER_PAGE,
-  skip: args.cursor ? 1 : undefined,
-  cursor: args.cursor ? { id: args.cursor } : undefined,
+  take,
+  skip: cursor ? 1 : undefined,
+  cursor: cursor ? { id: cursor } : undefined,
   select: {
    id: true,
    title: true,
@@ -68,15 +67,23 @@ const getFeed: Versus.GetManyVersus = async (args) => {
    description: true,
    status: true,
    tags: true,
-   likes: reacted as Prisma.VersusLikeFindManyArgs | undefined,
-   author: { select: { id: true, name: true, username: true, image: true, role: true } },
+   likes: reacted,
    _count: { select: { comments: true, likes: true } },
+   author: {
+    select: {
+     id: true,
+     name: true,
+     username: true,
+     image: true,
+     role: true,
+    },
+   },
    options: {
     orderBy: { id: "asc" },
     select: {
      text: true,
      id: true,
-     votes: reacted as Prisma.VersusOptionVoteFindManyArgs | undefined,
+     votes: reacted,
      _count: { select: { votes: true } },
     },
    },
@@ -84,7 +91,7 @@ const getFeed: Versus.GetManyVersus = async (args) => {
  });
 
  if (!versus) return [];
- return versus.map((versus) => createResponse(versus, reacted, args.userId));
+ return versus.map((versus) => formatResponse(versus, args.userId));
 };
 
-export default getFeed;
+export default getManyVersus;

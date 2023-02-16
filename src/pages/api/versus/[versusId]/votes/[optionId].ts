@@ -1,6 +1,7 @@
-import { postVote } from "@lib/versus/vote";
 import withApiHandler from "@lib/with-api-handler";
+import Schemas from "@lib/zod-schemas/versus";
 import CustomError from "@lib/error";
+import prisma from "@lib/prisma";
 
 export default withApiHandler(async (req, versusId, userId) => {
  switch (req.method) {
@@ -8,10 +9,29 @@ export default withApiHandler(async (req, versusId, userId) => {
    throw new CustomError(405);
   case "POST":
    const { optionId } = req.body;
-   return await postVote({
+
+   const validated = Schemas.VersusVote.parse({
     versusId: parseInt(versusId),
-    userId: userId as string,
+    userId,
     optionId,
+   });
+
+   await prisma.versusOptionVote.create({
+    data: {
+     user: {
+      connect: {
+       id: validated.userId,
+      },
+     },
+     option: {
+      connect: {
+       versusId_id: {
+        versusId: validated.versusId,
+        id: validated.optionId,
+       },
+      },
+     },
+    },
    });
  }
 });

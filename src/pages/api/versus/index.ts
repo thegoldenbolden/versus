@@ -1,10 +1,10 @@
-import { postVersus } from "@lib/versus";
+import getManyVersus from "@lib/versus/getManyVersus";
 import withApiHandler from "@lib/with-api-handler";
+import Schemas from "@lib/zod-schemas/versus";
 import CONFIG from "@lib/versus/config";
 import CustomError from "@lib/error";
-import getManyVersus from "@lib/versus/getManyVersus";
+import prisma from "@lib/prisma";
 
-// TODO: make sure pagination is being implemented properly
 export default withApiHandler(async (req, versusId, userId) => {
  switch (req.method) {
   default:
@@ -18,16 +18,36 @@ export default withApiHandler(async (req, versusId, userId) => {
     ...req.query,
     take: (take as number).toString(),
     userId,
-   }).catch((e) => []);
+   }).catch((e) => {
+    console.error(e);
+    return [];
+   });
 
    const last = items[items.length - 1];
    return {
     items,
     pagination: {
-     cursor: items.length < take || items[0].id <= take ? null : last.id,
+     cursor: items.length < take || items[0]?.id <= take ? null : last.id,
     },
    };
   case "POST":
-   return await postVersus({ ...req.body, userId });
+   const validated = Schemas.Versus.parse({ ...req.body, userId });
+
+   await prisma.versus.create({
+    select: { id: true },
+    data: {
+     author: { connect: { id: validated.userId } },
+     description: validated.description ?? undefined,
+     title: validated.title,
+     status: "PENDING",
+     tags: { set: validated.tags ?? [] },
+     options: {
+      createMany: {
+       skipDuplicates: true,
+       data: Array.from(validated.options).map((o) => ({ text: o })),
+      },
+     },
+    },
+   });
  }
 });

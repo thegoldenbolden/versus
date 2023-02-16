@@ -41,11 +41,10 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
 
  const mutation = useMutation({
   mutationFn: async (versus: SchemaTypes["PostVersus"]) => {
-   const response = await postRequest<SchemaTypes["PostVersus"]>("/api/versus", {
+   await postRequest<SchemaTypes["PostVersus"]>("/api/versus", {
     ...versus,
     options: Array.from(versus.options),
    });
-   return response.data.ok ? response.data.data : null;
   },
   onSuccess: () => {
    queryClient.invalidateQueries({ queryKey: versusKeys.all });

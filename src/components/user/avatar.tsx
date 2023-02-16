@@ -1,3 +1,4 @@
+"use client";
 import type { IconType } from "react-icons";
 import { IUserLine } from "../ui/icons";
 import Image from "../ui/image";

@@ -1,26 +1,40 @@
 import withApiHandler from "@lib/with-api-handler";
 import CustomError from "@lib/error";
 import prisma from "@lib/prisma";
-import getUserByUsername from "@lib/users/getUserByUsername";
 
-export default withApiHandler(async (req, versusId, userId) => {
+export default withApiHandler(async (req, versusId, sessionUserId) => {
  switch (req.method) {
   default:
    throw new CustomError(405);
   case "GET":
-   const { type, username } = req.query as {
-    username?: string;
-    type?: "createdVersus" | "likedVersus" | "votedVersus";
-   };
+   const { username } = req.query as { username?: string };
 
-   if (!username || !type) throw new CustomError(400);
-   const user = await getUserByUsername(username, type, userId);
+   if (!username) throw new CustomError(400);
+
+   const user = await prisma.user.findUniqueOrThrow({
+    where: { username },
+    select: {
+     name: true,
+     username: true,
+     image: true,
+     id: true,
+     followers: true,
+     following: true,
+     _count: { select: { followers: true, following: true } },
+    },
+   });
+
    return {
-    user,
-    isUser: !userId ? false : userId === user?.id,
+    data: {
+     name: user.name,
+     username: user.username,
+     image: user.image,
+     userFollows:
+      !sessionUserId || sessionUserId === user.id ? false : user.followers.length === 1,
+    },
    };
   case "DELETE":
-   await prisma.user.delete({ where: { id: userId } });
+   await prisma.user.delete({ where: { id: sessionUserId } });
    return;
  }
 });

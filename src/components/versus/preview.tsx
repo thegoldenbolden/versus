@@ -1,7 +1,16 @@
+import type { TAuthor } from "../../types";
 import { IHeartLine } from "../ui/icons";
 import Avatar from "../user/avatar";
 import Description from "./description";
 import Tags from "./tags";
+
+type Data = {
+ author: Omit<TAuthor, "id" | "role">;
+ title: string;
+ options: [string, string];
+ tags?: number[];
+ description?: string;
+};
 
 export default function Preview({ author, title, options, tags, description }: Data) {
  const optionIds = ["Blue", "Red"];
@@ -49,11 +58,3 @@ export default function Preview({ author, title, options, tags, description }: D
   </div>
  );
 }
-
-type Data = {
- author: Versus.Versus["author"];
- title: Versus.Versus["title"];
- options: [string, string];
- tags?: number[];
- description?: string;
-};

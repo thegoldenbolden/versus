@@ -1,6 +1,8 @@
 import type { SchemaTypes } from "@lib/zod-schemas/versus";
+import type { Session } from "next-auth";
+import type { Response } from "../types";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 import { deleteRequest, postRequest } from "@lib/make-requests";
 import Optimistic from "@lib/versus/optimistic";
@@ -8,10 +10,23 @@ import versusKeys from "@lib/versus/queryKeys";
 import Schemas from "@lib/zod-schemas/versus";
 import CustomError from "@lib/error";
 
-export default function useVersusMutation(redirect?: Function) {
- const { data: session } = useSession();
+export type UseVersusMutation = ReturnType<typeof useVersusMutation>;
+
+export type MutationRequest = "like" | "remove" | "vote";
+export type MutationVariables = {
+ type: MutationRequest;
+ versusId: number | string;
+ userLikes?: boolean;
+ optionId?: string;
+ commentId?: string;
+};
+
+export default function useVersusMutation(
+ sessionUser?: Session["user"],
+ redirect?: Function
+) {
  const queryClient = useQueryClient();
- const userId = session?.user.id;
+ const sessionUserId = sessionUser?.id;
 
  return useMutation({
   mutationFn: async ({ type, versusId, userLikes, optionId }: MutationVariables) => {
@@ -23,37 +38,45 @@ export default function useVersusMutation(redirect?: Function) {
     default:
      throw new Error("Invalid Mutation Type");
     case "remove":
-     if (!userId) throw new CustomError(401);
+     if (!sessionUserId) throw new CustomError(401);
      const deleted = await deleteRequest<SchemaTypes["DeleteVersusOrComment"]>(versusUrl);
-     return deleted.data.ok ? deleted.data.data : null;
+     return deleted.data.ok ? deleted.data : null;
     case "like":
-     if (!userId) throw new CustomError(401);
+     if (!sessionUserId) throw new CustomError(401);
      const likeUrl = versusUrl + "/likes";
      if (userLikes) {
-      type DeleteRequest = Versus.ResponseData<SchemaTypes["DeleteVersusOrComment"]>;
-      const removed = await deleteRequest<Versus.ResponseData<DeleteRequest>>(likeUrl);
-      return removed.data.ok ? removed.data.data : null;
+      type DeleteRequest = Response<SchemaTypes["DeleteVersusOrComment"]>;
+      const removed = await deleteRequest<Response<DeleteRequest>>(likeUrl);
+      return removed.data.ok ? removed.data : null;
      }
 
      const type = "versus";
-     const parsedLike = Schemas.VersusLike.safeParse({ userId, versusId, type });
+     const parsedLike = Schemas.VersusLike.safeParse({
+      userId: sessionUserId,
+      versusId,
+      type,
+     });
      if (!parsedLike.success) return null;
 
      const like = await postRequest<SchemaTypes["PostVersusLike"]>(
       likeUrl,
       parsedLike.data
      );
-     return like.data.ok ? like.data.data : null;
+     return like.data.ok ? like.data : null;
     case "vote":
-     if (!userId) return null;
-     const parsedVote = Schemas.VersusVote.safeParse({ optionId, userId, versusId });
+     if (!sessionUserId) return null;
+     const parsedVote = Schemas.VersusVote.safeParse({
+      optionId,
+      userId: sessionUserId,
+      versusId,
+     });
      if (!parsedVote.success) return null;
      const voteUrl = `${versusUrl}/votes/${optionId}`;
      const vote = await postRequest<SchemaTypes["PostVersusVote"]>(
       voteUrl,
       parsedVote.data
      );
-     return vote.data.ok ? vote.data.data : null;
+     return vote.data.ok ? vote.data : null;
    }
   },
   onMutate: async ({ type, optionId, versusId }) => {
@@ -98,14 +121,3 @@ export default function useVersusMutation(redirect?: Function) {
   },
  });
 }
-
-export type UseVersusMutation = ReturnType<typeof useVersusMutation>;
-
-export type MutationRequest = "like" | "remove" | "vote";
-export type MutationVariables = {
- type: MutationRequest;
- versusId: number | string;
- userLikes?: boolean;
- optionId?: string;
- commentId?: string;
-};

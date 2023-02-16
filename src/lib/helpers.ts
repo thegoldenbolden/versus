@@ -16,7 +16,7 @@ export function debounce(func: Function, wait: number, immediate: boolean = fals
  };
 }
 
-export function determineWinner([one, two]: [number, number]) {
+export function determineWinner([one, two]: number[]) {
  if (typeof one !== "number" && typeof two !== "number") {
   throw new Error("Couldn't determine winner");
  }

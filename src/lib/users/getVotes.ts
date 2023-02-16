@@ -1,12 +1,12 @@
 import type { Prisma } from "@prisma/client";
-import type { Reacted } from "@lib/versus/createResponse";
+import type { GetManyVersus } from "@lib/versus/getManyVersus";
+
+import formatResponse from "@lib/versus/formatResponse";
+import CONFIG from "@lib/versus/config";
 import prisma from "@lib/prisma";
 
-import { createResponse } from "@lib/versus/createResponse";
-import CONFIG from "@lib/versus/config";
-
-// TODO: add return type;
-type GetUserVotes = (x: string, y?: string, z?: string | number) => Promise<any>;
+// prettier-ignore
+type GetUserVotes = (x: string, y?: string, z?: string | number) => ReturnType<GetManyVersus>;
 
 const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
  // Only use cursor if it is specified, will break 'orderBy' otherwise.
@@ -14,7 +14,7 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
  cursor = isNaN(cursor) ? undefined : cursor;
 
  // Find all versus the user has voted on
- let reacted: Reacted;
+ let reacted: { select: { userId: true }; where: { userId: string } } | undefined;
 
  if (userId) {
   reacted = {
@@ -73,9 +73,7 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
  });
 
  if (!votes?.votedVersus?.[0]) return [];
- return votes.votedVersus.map((versus) =>
-  createResponse(versus.option.versus, reacted, userId)
- );
+ return votes.votedVersus.map((versus) => formatResponse(versus.option.versus, userId));
 };
 
 export default getUserVotes;

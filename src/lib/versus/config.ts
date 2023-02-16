@@ -1,3 +1,6 @@
+import type { Prisma } from "@prisma/client";
+import type { Tag } from "../../types";
+
 type VersusConfig = {
  MAX_VERSUS_PER_PAGE: 20 | 5;
  MAX_COMMENTS_PER_PAGE: 20;
@@ -16,7 +19,7 @@ type VersusConfig = {
  REGEX_USERNAME: RegExp;
  REGEX_NAME: RegExp;
 
- TAGS: { id: number; name: Versus.Tag }[];
+ TAGS: { id: number; name: Tag }[];
 };
 
 const CONFIG: VersusConfig = {

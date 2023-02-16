@@ -1,22 +1,36 @@
-import type { PropsWithChildren, FC } from "react";
-import type { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
-import type { Mutate } from "types/mutate";
+"use client";
+import type { Session } from "next-auth";
+import type { GetManyVersus, VersusQuery } from "../../types";
+import { Fragment, useState } from "react";
+import { usePathname } from "next/navigation";
 
-import { Fragment, useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
 import CONFIG from "@lib/versus/config";
+import useFeed from "@hooks/use-feed";
+import useVersusMutation from "@hooks/use-versus-mutation";
+
+import CustomError from "../ui/error";
 import Versus from "../versus";
 import FallbackVersus from "../versus/fallback";
 import VersusNotFound from "../versus/not-found";
-import Spinner from "../loading/spinner";
-import CustomError from "../ui/error";
-import Header from "../feed/header";
 
-const VersusFeed: VersusFeed = ({ children, status, data, ...props }) => {
- const [tab, setTab] = useState<number>(0);
+import Feed from "../feed";
+import LoadMore from "../buttons/load-more";
+
+type VersusFeedProps = {
+ sessionUser?: Session["user"];
+ initialData?: GetManyVersus;
+ searchParams?: VersusQuery;
+};
+
+export default function VersusFeed({ sessionUser, initialData }: VersusFeedProps) {
+ const { status, data, ...feed } = useFeed(initialData);
+ const mutation = useVersusMutation(sessionUser);
+ const pathname = usePathname();
+
+ const [tab, setTab] = useState(0);
  const displaySingle = tab === 1;
- let Component = null;
 
+ let Component = null;
  if (status === "loading") {
   Component = <LoadingInitial />;
  } else if (status === "error") {
@@ -27,58 +41,31 @@ const VersusFeed: VersusFeed = ({ children, status, data, ...props }) => {
 
  return (
   <>
-   <div className="flex flex-col w-full divide-y divide-smoky-black-translucent dark:divide-lotion-translucent">
-    <Header tab={tab} setTab={setTab}>
-     {children}
-    </Header>
+   <Feed.Header title={pathname?.substring(1) ?? "feed"} tab={tab} setTab={setTab} />
+   <Feed.Items>
     {Component
      ? Component
      : data?.pages.map((page) => {
         return page?.items.map((versus, i) => (
          <Fragment key={versus.id}>
-          <Versus data={{ versus, displaySingle }} mutation={props.mutation} />
+          <Versus
+           sessionUser={sessionUser}
+           versus={versus}
+           displaySingle={displaySingle}
+           mutation={mutation}
+          />
          </Fragment>
         ));
        })}
-   </div>
-   {data?.pages[0] && (
-    <LoadMore
-     hasNextPage={props.hasNextPage}
-     isFetchingNextPage={props.isFetchingNextPage}
-     fetchNextPage={props.fetchNextPage}
-    />
-   )}
+    {data?.pages[0] && (
+     <LoadMore
+      hasNextPage={feed.hasNextPage}
+      isFetchingNextPage={feed.isFetchingNextPage}
+      fetchNextPage={feed.fetchNextPage}
+     />
+    )}
+   </Feed.Items>
   </>
- );
-};
-
-export default VersusFeed;
-
-function LoadMore({ hasNextPage, fetchNextPage, isFetchingNextPage }: Infinite) {
- const { inView, ref } = useInView();
-
- useEffect(() => {
-  inView && hasNextPage && fetchNextPage();
- }, [inView, hasNextPage, fetchNextPage]);
-
- return (
-  <button
-   ref={ref}
-   onClick={() => hasNextPage && fetchNextPage()}
-   className="flex items-center justify-center w-full gap-2 p-2 mb-16 text-lg text-center bg-transparent border-2 border-transparent border-solid text-smoky-black dark:text-lotion border-t-smoky-black-translucent dark:border-t-lotion-translucent font-display sm:mb-0"
-   disabled={!hasNextPage || isFetchingNextPage}
-  >
-   {isFetchingNextPage ? (
-    <>
-     <Spinner />
-     <>Loading more...</>
-    </>
-   ) : hasNextPage ? (
-    <>Load more</>
-   ) : (
-    <>You reached the end!</>
-   )}
-  </button>
  );
 }
 
@@ -95,18 +82,3 @@ function LoadingInitial() {
   </>
  );
 }
-
-type VersusFeed = FC<
- PropsWithChildren &
-  Infinite & {
-   data: InfiniteData<Versus.ResponsePagination<Versus.Versus> | null> | undefined;
-   status: string;
-   mutation: Mutate;
-  }
->;
-
-type Infinite = {
- hasNextPage: boolean | undefined;
- isFetchingNextPage: boolean | undefined;
- fetchNextPage: UseInfiniteQueryResult["fetchNextPage"];
-};

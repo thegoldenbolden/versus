@@ -52,17 +52,15 @@
   color: theme("colors.smoky-black");
  }
 
- input,
- textarea {
+ input::placeholder,
+ textarea::placeholder {
+  opacity: 0.75;
+  color: theme("colors.smoky-black");
+ }
 
-  &::placeholder {
-   opacity: 0.75;
-   color: theme("colors.smoky-black");
-  }
-
-  &:focus {
-   outline: none;
-  }
+ input:focus,
+ textarea:focus {
+  outline: none;
  }
 
  :disabled {
@@ -184,7 +182,7 @@
    word-break: break-all;
    position: relative;
    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.15);
-   @include fluid-type(300px, 560px, 18px, 40px);
+   @include fluid-type(300px, 560px, 18px, 36px);
 
    .votes {
     position: absolute;
@@ -216,8 +214,12 @@
     }
    }
 
+   @media (min-height: 640px) {
+    min-height: 172px;
+   }
+
    @media (min-height: 768px) {
-    min-height: 20vh;
+    min-height: 192px;
    }
 
    @media (min-height: 800px) {
