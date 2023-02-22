@@ -1,5 +1,9 @@
 import type { VersusQuery } from "types";
-export const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+
+export const baseUrl =
+ process.env.NODE_ENV === "production"
+  ? "https://versuszero.vercel.app"
+  : "http://localhost:3000";
 
 const init: RequestInit = {
  credentials: "same-origin",
