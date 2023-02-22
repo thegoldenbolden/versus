@@ -1,25 +1,14 @@
+import { cache } from "react";
 import prisma from "@lib/prisma";
+import getUser from "@lib/auth/get-user";
 
-// prettier-ignore
-type GetUserByUsername = (target: string, total: Total, sessionUserId?: string) => Promise<User | null>;
-type Total = "likedVersus" | "createdVersus" | "votedVersus";
+export type UserProfile = Awaited<ReturnType<typeof getUserByUsername>>;
 
-export type User = {
- name: string | null;
- username: string | null;
- image: string | null;
- id: string;
- userFollows: boolean;
- total: {
-  versus?: string;
-  votes?: string;
-  likes?: string;
-  following: string;
-  followers: string;
- };
-};
+const getUserByUsername = cache(async (username: string, sessionUserId?: string) => {
+ sessionUserId ??= await getUser()
+  .then((user) => user?.id)
+  .catch((e) => void 0);
 
-const getUserByUsername: GetUserByUsername = async (username, column, sessionUserId) => {
  const user = await prisma.user.findUnique({
   where: { username },
   select: {
@@ -27,39 +16,22 @@ const getUserByUsername: GetUserByUsername = async (username, column, sessionUse
    username: true,
    image: true,
    id: true,
-   followers: true,
-   following: true,
-   _count: { select: { followers: true, following: true, [column]: true } },
+   _count: { select: { followers: true, following: true } },
+   followers: !sessionUserId ? false : { where: { followerId: sessionUserId } },
   },
  });
 
  if (!user) return null;
 
- const total: User["total"] = {
-  followers: `${user._count.followers}`,
-  following: `${user._count.following}`,
- };
-
- switch (column) {
-  case "createdVersus":
-   total.versus = `${user._count.createdVersus}`;
-   break;
-  case "likedVersus":
-   total.likes = `${user._count.likedVersus}`;
-  case "votedVersus":
-   total.votes = `${user._count.votedVersus}`;
-   break;
- }
-
  return {
-  total,
   name: user.name,
   username: user.username,
   image: user.image,
   id: user.id,
-  // prettier-ignore
-  userFollows: !sessionUserId || sessionUserId === user.id ? false : user.followers.length === 1,
+  _count: user._count,
+  userFollows:
+   !sessionUserId || sessionUserId === user.id ? false : user.followers.length === 1,
  };
-};
+});
 
 export default getUserByUsername;

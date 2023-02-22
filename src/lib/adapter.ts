@@ -28,7 +28,6 @@ export default function PrismaAdapter(): Adapter {
     where: { provider_providerAccountId },
    }),
   async getSessionAndUser(sessionToken) {
-   console.count("getting session & user");
    const userAndSession = await p.session.findUnique({
     where: { sessionToken },
     include: { user: true },

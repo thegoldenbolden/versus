@@ -1,17 +1,18 @@
 import type { Prisma } from "@prisma/client";
-import type { VersusQuery } from "../../types";
+import type { Pagination, VersusQuery } from "../../types";
 import type { Versus } from "./getVersus";
 
 import formatResponse from "./formatResponse";
-import { validateTags } from "./validate";
 import CONFIG from "../versus/config";
 import { log } from "../helpers";
 import prisma from "../prisma";
 
-export type GetManyVersus = (args: VersusQuery) => Promise<NonNullable<Versus>[]>;
+export type GetManyVersus = (
+ args: VersusQuery
+) => Promise<Pagination<NonNullable<Versus>>>;
 
 const getManyVersus: GetManyVersus = async (args = {}) => {
- const take = parseInt(args.take ?? "") || CONFIG.MAX_VERSUS_PER_PAGE;
+ const limit = parseInt(args.limit ?? "") || CONFIG.MAX_VERSUS_PER_PAGE;
  const cursor = parseInt(args.cursor ?? "") || undefined;
 
  // Ignore versus that have been rejected.
@@ -28,9 +29,10 @@ const getManyVersus: GetManyVersus = async (args = {}) => {
 
  // Searches by tag ids which only exists in @lib/versus/config
  if (args.tags) {
-  const t: number[] = args.tags.split(",").map((tag) => parseInt(tag));
-  validateTags(t);
-  OR.push(...t.map((t) => ({ tags: { has: t } })));
+  const tags: number[] = args.tags.split(",").map((tag) => parseInt(tag));
+  OR.push({
+   tags: { some: { id: { in: tags } } },
+  });
  }
 
  // If any of the above were true add to where input.
@@ -49,7 +51,7 @@ const getManyVersus: GetManyVersus = async (args = {}) => {
  log("Querying database", {
   where,
   orderBy: { createdAt: "desc" },
-  take: args.take,
+  take: args.limit,
   skip: args.cursor ? 1 : undefined,
   cursor: args.cursor ? { id: args.cursor } : undefined,
  });
@@ -57,7 +59,7 @@ const getManyVersus: GetManyVersus = async (args = {}) => {
  const versus = await prisma.versus.findMany({
   where,
   orderBy: { id: "desc" },
-  take,
+  take: limit,
   skip: cursor ? 1 : undefined,
   cursor: cursor ? { id: cursor } : undefined,
   select: {
@@ -66,8 +68,8 @@ const getManyVersus: GetManyVersus = async (args = {}) => {
    createdAt: true,
    description: true,
    status: true,
-   tags: true,
    likes: reacted,
+   tags: { select: { id: true, name: true } },
    _count: { select: { comments: true, likes: true } },
    author: {
     select: {
@@ -90,8 +92,14 @@ const getManyVersus: GetManyVersus = async (args = {}) => {
   },
  });
 
- if (!versus) return [];
- return versus.map((versus) => formatResponse(versus, args.userId));
+ const last = versus[versus.length - 1];
+
+ return {
+  items: versus.map((versus) => formatResponse(versus, args.userId)),
+  pagination: {
+   cursor: versus.length < limit || versus[0]?.id <= limit ? null : last.id,
+  },
+ };
 };
 
 export default getManyVersus;

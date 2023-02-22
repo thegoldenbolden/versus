@@ -8,6 +8,7 @@ const queryClient = new QueryClient({
  defaultOptions: {
   queries: {
    refetchOnWindowFocus: process.env.NODE_ENV === "production",
+   refetchOnMount: process.env.NODE_ENV === "production",
    staleTime: 300000,
   },
  },

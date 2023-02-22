@@ -16,13 +16,9 @@ export default withApiHandler(async (req, versusId, userId) => {
     optionId,
    });
 
-   await prisma.versusOptionVote.create({
+   await prisma.vote.create({
     data: {
-     user: {
-      connect: {
-       id: validated.userId,
-      },
-     },
+     user: { connect: { id: validated.userId } },
      option: {
       connect: {
        versusId_id: {

@@ -1,8 +1,9 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { MutateFeed } from "../../types";
 import type { Versus } from "@lib/versus/getVersus";
+import type { MutateFeed } from "../../types";
 
 import versusKeys from "./queryKeys";
+import { log } from "@lib/helpers";
 
 type OptimisicUpdates = {
  remove: (qc: QueryClient, versusId: string) => unknown;

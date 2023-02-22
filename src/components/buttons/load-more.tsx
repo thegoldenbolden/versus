@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
 import Spinner from "@components/loading/spinner";
+import { bebas } from "@lib/fonts";
 
 type Infinite = {
  hasNextPage: boolean | undefined;
@@ -27,7 +28,7 @@ export default function LoadMore({
   <button
    ref={ref}
    onClick={() => hasNextPage && fetchNextPage()}
-   className="flex items-center justify-center w-full gap-2 p-2 mb-16 text-lg text-center bg-transparent border-2 border-transparent border-solid text-smoky-black dark:text-lotion border-t-smoky-black-translucent dark:border-t-lotion-translucent font-display sm:mb-0"
+   className={`${bebas.className} flex items-center justify-center w-full gap-2 p-2 mb-16 text-lg text-center bg-transparent text-smoky-black dark:text-lotion sm:mb-0`}
    disabled={!hasNextPage || isFetchingNextPage}
   >
    {isFetchingNextPage ? (

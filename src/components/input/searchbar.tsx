@@ -1,11 +1,10 @@
+"use client";
 import type { FormEventHandler } from "react";
 import { useState } from "react";
-import { useRouter } from "next/router";
-
+import { useRouter } from "next/navigation";
 import { ISearchLine } from "../ui/icons";
-import { TextInput } from "../input";
 
-const Searchbar = ({ className = "" }: { className?: string }) => {
+const Searchbar = () => {
  const [value, setValue] = useState("");
  const router = useRouter();
 
@@ -13,28 +12,28 @@ const Searchbar = ({ className = "" }: { className?: string }) => {
   e.preventDefault();
 
   if (value.length > 0) {
-   router.replace({
-    pathname: "/explore",
-    query: { q: value },
-   });
+   router.replace(`/explore?q=${value}`);
   }
  };
 
- const defaultClass =
-  "sticky rounded-sm top-0 z-10 text-base flex items-center w-full gap-4 px-4 transition-colors group focus-within:bg-smoky-black-translucent focus-within:dark:bg-lotion-translucent hover:bg-smoky-black-translucent focus:bg-smoky-black-translucent hover:dark:bg-lotion-translucent focus:dark:bg-lotion-translucent";
-
  return (
-  <form className={`${defaultClass} ${className}`} onSubmit={handleSubmit}>
-   <ISearchLine className="w-5 h-5 opacity-75 group-focus-within:opacity-100" />
-   <TextInput
-    id="searchbar"
-    className="py-4 text-base bg-transparent md:py-3 grow"
-    type="text"
-    placeholder="Search for versus"
-    autoComplete="off"
-    value={value}
-    onChange={(e) => setValue(e.target.value)}
-   />
+  <form className="px-4 py-2" onSubmit={handleSubmit}>
+   <div className="rounded-full z-10 border-solid border-2 border-smoky-black-translucent dark:border-lotion-translucent text-base group flex items-center gap-4 px-4 py-2">
+    <ISearchLine className="w-5 h-5 opacity-75 group-hover:opacity-100 group-focus-within:opacity-100" />
+    <label htmlFor="searchbar" className="sr-only capitalize">
+     search versus
+    </label>
+    <input
+     value={value}
+     onChange={(e) => setValue(e.target.value)}
+     id="searchbar"
+     name="search versus"
+     type="text"
+     placeholder="Search Versus"
+     autoComplete="off"
+     className="opacity-75 group-hover:opacity-100 group-focus-within:opacity-100 bg-transparent grow text-inherit caret-smoky-black dark:caret-lotion dark:placeholder-inherit focus:outline-none"
+    />
+   </div>
   </form>
  );
 };

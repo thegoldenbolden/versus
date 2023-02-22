@@ -23,10 +23,10 @@ const getUserVersus = async (
   };
  }
 
- const likes = await prisma.user.findUnique({
+ const user = await prisma.user.findUnique({
   where: { id: targetId },
   select: {
-   createdVersus: {
+   versus: {
     orderBy: { id: "desc" },
     take: CONFIG.MAX_VERSUS_PER_PAGE,
     skip: cursor ? 1 : undefined,
@@ -37,8 +37,8 @@ const getUserVersus = async (
      createdAt: true,
      description: true,
      status: true,
-     tags: true,
      likes: reacted,
+     tags: { select: { id: true, name: true } },
      author: {
       select: { id: true, name: true, username: true, image: true, role: true },
      },
@@ -57,8 +57,19 @@ const getUserVersus = async (
   },
  });
 
- if (!likes?.createdVersus?.[0]) return [];
- return likes.createdVersus.map((versus) => formatResponse(versus, userId));
+ const created = !user?.versus ? [] : user.versus;
+ const last = created[created.length - 1];
+
+ return {
+  items: created.map((versus) => formatResponse(versus, userId)),
+  pagination: {
+   cursor:
+    created.length < CONFIG.MAX_VERSUS_PER_PAGE ||
+    created[0]?.id <= CONFIG.MAX_VERSUS_PER_PAGE
+     ? null
+     : last?.id,
+  },
+ };
 };
 
 export default getUserVersus;

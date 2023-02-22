@@ -1,3 +1,5 @@
+import { bebas } from "@lib/fonts";
+
 export const metadata = {
  title: "Privacy Policy",
  description: "Versus Zero privacy policy",
@@ -8,7 +10,7 @@ export default function Privacy() {
   <div className="flex flex-col max-w-2xl gap-2 py-4 mb-8 border-2 border-transparent border-solid divide-y dark:divide-lotion-translucent sm:mb-0 sm:border-smoky-black-translucent sm:dark:border-lotion-translucent border-t-transparent border-b-transparent">
    <section className="flex flex-col gap-2 px-2 py-8">
     <div>
-     <h1 className="text-3xl font-display">Privacy Policy</h1>
+     <h1 className={`${bebas.className} text-3xl`}>Privacy Policy</h1>
      <div className="text-xs font-bold opacity-75">
       Last Updated: <time dateTime="2023-01-18">January 18, 2023</time>
      </div>
@@ -21,9 +23,7 @@ export default function Privacy() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
-     Information We Collect
-    </h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Information We Collect</h2>
     <p className="text-sm">
      We collect personal information about you when you provide it to us directly, such as
      when you create an account. The personal information we collect may include your
@@ -33,7 +33,7 @@ export default function Privacy() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>
      How We Use Your Information
     </h2>
     <div className="flex flex-col gap-2">
@@ -55,7 +55,7 @@ export default function Privacy() {
     </div>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>
      Sharing Your Information
     </h2>
     <div className="flex flex-col gap-2">
@@ -81,7 +81,7 @@ export default function Privacy() {
     </div>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">Data Security</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Data Security</h2>
     <p className="text-sm">
      We take steps to protect your personal information from unauthorized access, use, or
      disclosure. We use secure servers, encryption, and other security measures to protect
@@ -89,9 +89,7 @@ export default function Privacy() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
-     Your Rights and Choices
-    </h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Your Rights and Choices</h2>
     <p className="text-sm">
      You have the right to access, correct, or delete your personal information at any
      time. You can also opt out of receiving promotional materials from us by following
@@ -99,7 +97,7 @@ export default function Privacy() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>
      Changes to this Privacy Policy
     </h2>
     <p className="text-sm">
@@ -109,7 +107,7 @@ export default function Privacy() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">Contact Us</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Contact Us</h2>
     <p className="text-sm">
      If you have any questions or concerns about our privacy policy or the handling of
      your personal information, please contact&nbsp;

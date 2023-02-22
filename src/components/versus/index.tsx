@@ -1,9 +1,8 @@
 import type { MutateData } from "../../types";
-import type { Session } from "next-auth";
 import type { Versus } from "@lib/versus/getVersus";
 
 import { Fragment } from "react";
-import { formatNumber, formatPercent, formatPlural } from "@lib/format";
+import { formatPercent, formatPlural } from "@lib/format";
 import { determineWinner } from "@lib/helpers";
 import NumberFormat from "../locale/number";
 import RelativeDate from "../locale/date";
@@ -12,19 +11,19 @@ import Description from "./description";
 import Vote from "../buttons/vote";
 import Header from "./header";
 import Tags from "./tags";
+import Link from "next/link";
+import getUser from "@lib/auth/get-user";
 
 type Data = {
  versus: NonNullable<Versus>;
  displaySingle: boolean;
- sessionUser?: Session["user"];
+ sessionUserId?: string | null;
 };
 
 const Versus = (props: MutateData<Data>) => {
- const { versus, mutation, sessionUser } = props;
+ const { versus, mutation } = props;
  const totalVotes = versus.options.reduce((a, b) => a + b._count.votes, 0);
  const winner = determineWinner(versus.options.map((o) => o._count.votes));
-
- console.log(versus);
 
  return (
   <article
@@ -71,7 +70,7 @@ const Versus = (props: MutateData<Data>) => {
    </div>
    <div className="actions">
     <LikeButton
-     sessionUser={sessionUser}
+     sessionUserId={props.sessionUserId}
      userLikes={versus.userLikes}
      versusId={versus.id}
      mutation={mutation}
@@ -86,7 +85,17 @@ const Versus = (props: MutateData<Data>) => {
      </span>
     </div>
     <div className="description">
-     <span className="mr-2 font-bold">{versus.author.name}</span>
+     {versus.author.username ? (
+      <Link
+       className="mr-2 font-bold hover:text-underline"
+       aria-label="author profile"
+       href={`/${versus.author.username}`}
+      >
+       {versus.author.name}
+      </Link>
+     ) : (
+      <span className="mr-2 font-bold">{versus.author.name}</span>
+     )}
      <Description text={versus.description} />
     </div>
     <Tags tags={versus.tags} />

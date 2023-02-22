@@ -48,7 +48,11 @@ export function getRelativeTimeString(date: Date | string | number, lang: string
  const unitIndex = cutoffs.findIndex((cutoff) => cutoff > Math.abs(deltaSeconds));
  const divisor = unitIndex > 0 ? cutoffs[unitIndex - 1] : 1;
  const rtf = new Intl.RelativeTimeFormat(lang || navigator?.language || "en", {
-  numeric: "auto",
+  numeric: "always",
+  style: "long",
  });
- return rtf.format(Math.floor(deltaSeconds / divisor), units[unitIndex]);
+
+ let value = deltaSeconds / divisor;
+ value = value < 0 ? value + 1 : value;
+ return rtf.format(Math.floor(value), units[unitIndex]);
 }

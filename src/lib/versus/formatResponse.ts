@@ -1,4 +1,4 @@
-import type { Role, VersusLike, VersusOptionVote, VersusStatus } from "@prisma/client";
+import type { Role, VersusLike, Tag, Vote, VersusStatus } from "@prisma/client";
 
 type Versus = {
  id: number;
@@ -7,7 +7,7 @@ type Versus = {
  createdAt: Date;
  status: VersusStatus;
  likes: Pick<VersusLike, "userId">[];
- tags: number[];
+ tags: Tag[];
  _count: {
   likes: number;
   comments: number;
@@ -22,7 +22,7 @@ type Versus = {
  options: {
   _count: { votes: number };
   id: string;
-  votes: Pick<VersusOptionVote, "userId">[];
+  votes: Pick<Vote, "userId">[];
   text: string;
  }[];
 };
@@ -37,7 +37,7 @@ export default function formatResponse(versus: Versus, userId?: string | null) {
   status: versus.status,
   options: versus.options,
   tags: versus.tags,
-  createdAt: versus.createdAt,
+  createdAt: versus.createdAt.toISOString(),
   _count: versus._count,
 
   // Unauthenticated users should always be able to vote.

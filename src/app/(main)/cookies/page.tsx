@@ -1,9 +1,11 @@
+import { bebas } from "@lib/fonts";
+
 export default function Cookies() {
  return (
   <div className="flex flex-col max-w-2xl gap-2 py-4 mb-8 border-2 border-transparent border-solid divide-y dark:divide-lotion-translucent sm:mb-0 sm:border-smoky-black-translucent sm:dark:border-lotion-translucent border-t-transparent border-b-transparent">
    <section className="flex flex-col gap-2 px-2 py-8">
     <div>
-     <h1 className="text-3xl font-display">Cookie Policy</h1>
+     <h1 className={`${bebas.className} text-3xl`}>Cookie Policy</h1>
      <div className="text-xs font-bold opacity-75">
       Last Updated: <time dateTime="2023-01-26">January 26, 2023</time>
      </div>
@@ -15,7 +17,7 @@ export default function Cookies() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">What are cookies?</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>What are cookies?</h2>
     <p className="text-sm">
      Cookies are small text files that are stored on your device when you visit a website.
      They are widely used to make websites work, or work more efficiently, as well as to
@@ -23,7 +25,7 @@ export default function Cookies() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>
      Types of cookies we use:
     </h2>
     <ol className="list-[square] px-4 text-sm">
@@ -40,7 +42,7 @@ export default function Cookies() {
     </ol>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl font-bold opacity-100 font-display">Manage Your Cookies</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Manage Your Cookies</h2>
     <p className="text-sm">
      You can manage cookies by adjusting your browser settings. Most browsers allow you to
      block or delete cookies, but doing so may affect your ability to use some features of

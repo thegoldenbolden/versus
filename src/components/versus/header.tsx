@@ -1,5 +1,4 @@
 import type { MutateData, TAuthor } from "../../types";
-
 import Link from "next/link";
 import Avatar from "../user/avatar";
 import More from "./more";
@@ -34,7 +33,7 @@ export default function Header(props: MutateData<Data>) {
  );
 
  return (
-  <div className="header">
+  <header className="header">
    <Avatar image={{ url: author.image, height: 40, width: 40 }} />
    <div className="flex flex-col justify-start text-sm truncate grow">
     {AuthorLink}
@@ -47,6 +46,6 @@ export default function Header(props: MutateData<Data>) {
      mutation={props.mutation}
     />
    )}
-  </div>
+  </header>
  );
 }

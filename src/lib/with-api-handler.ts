@@ -1,14 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import CustomError from "@lib/error";
-import getUser from "@lib/auth/get-user";
 import { log } from "@lib/helpers";
-import { getServerSession } from "next-auth";
 import { options } from "@auth/[...nextauth]";
+import { getServerSession } from "next-auth";
 
 interface WithNextApiHandler {
- // TODO: fix typing for different methods
- (req: NextApiRequest, versusId: string, userId?: string): any;
+ (req: NextApiRequest, versusId: string, userId?: string): Promise<any>;
 }
 
 const withApiHandler = (handler: WithNextApiHandler) => {
@@ -16,7 +14,6 @@ const withApiHandler = (handler: WithNextApiHandler) => {
   try {
    const session = await getServerSession(req, res, options);
    const versusId = req.method === "POST" ? req.body.versusId : req.query.versusId;
-   console.log(session);
    const userId = session?.user.id;
    let response: any;
 
@@ -25,7 +22,8 @@ const withApiHandler = (handler: WithNextApiHandler) => {
     referer: req.headers.referer,
     method: req.method,
     url: req.url,
-    params: { query: req.query, body: req.body },
+    query: req.query,
+    body: req.body,
    });
 
    switch (req.method) {
@@ -33,32 +31,37 @@ const withApiHandler = (handler: WithNextApiHandler) => {
      throw new CustomError(405);
     case "GET":
      response = await handler(req, versusId, userId);
-     return res.status(200).send({ ...response, ok: true });
+     return res.status(200).send(response);
     case "POST":
      if (!userId) throw new CustomError(401);
      response = await handler(req, versusId, userId);
-     return res.status(201).send({ ...response, ok: true });
+     return res.status(201).send(response);
     case "PATCH":
      if (!userId) throw new CustomError(401);
      response = await handler(req, versusId, userId);
-     return res.status(201).send({ ...response, ok: true });
+     return res.status(201).send(response);
     case "DELETE":
      if (!userId) {
       throw new CustomError(404);
      }
 
      const data = await handler(req, versusId, userId);
-     return res.status(data?.status ?? 200).send({ ok: true });
+     if (!data) {
+      res.status(200).end();
+      return;
+     }
+
+     res.status(data.status ?? 200).send(data);
    }
   } catch (error: any) {
    log(`=======`, error);
 
    if (error instanceof CustomError) {
-    res.status(error.status).send({ ok: false, message: error.getMessage() });
+    res.status(error.status).send({ message: error.getMessage() });
     return;
    }
 
-   res.status(500).send({ ok: false, message: "Something went wrong" });
+   res.status(500).send({ message: "Something went wrong" });
    return;
   }
  };

@@ -1,22 +1,26 @@
 "use client";
-import type { Session } from "next-auth";
 import type { MutateData } from "types";
 import { IHeartLine } from "../ui/icons";
 import Restricted from "../auth/restricted";
 import useModal from "@hooks/use-modal";
 
 type LikeProps = {
- sessionUser?: Session["user"];
+ sessionUserId?: string | null;
  userLikes: boolean;
  versusId: number;
  commentId?: string;
 };
 
-const Like = ({ versusId, userLikes, sessionUser, mutation }: MutateData<LikeProps>) => {
+const Like = ({
+ versusId,
+ userLikes,
+ sessionUserId,
+ mutation,
+}: MutateData<LikeProps>) => {
  const { isOpen, closeModal, openModal } = useModal();
 
  const handleLike = () => {
-  if (!sessionUser?.id) {
+  if (!sessionUserId) {
    openModal();
    return;
   }
@@ -40,7 +44,7 @@ const Like = ({ versusId, userLikes, sessionUser, mutation }: MutateData<LikePro
    >
     <IHeartLine className={`w-8 h-8 ${userLikes ? likeClassName : unlikeClassName}`} />
    </button>
-   {!sessionUser && (
+   {!sessionUserId && (
     <Restricted
      message="Please login in to leave a like."
      isOpen={isOpen}

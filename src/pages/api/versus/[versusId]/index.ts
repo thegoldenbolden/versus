@@ -9,7 +9,7 @@ export default withApiHandler(async (req, versusId, userId) => {
   default:
    throw new CustomError(405);
   case "GET":
-   const versus = await getVersus({ take: "1", skip: "0", cursor: versusId, userId });
+   const versus = await getVersus({ limit: "1", skip: "0", cursor: versusId, userId });
    return { data: versus ?? null };
   case "DELETE":
    const validated = Schemas.VersusDelete.parse({ versusId, userId });

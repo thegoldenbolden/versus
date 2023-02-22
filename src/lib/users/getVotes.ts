@@ -23,10 +23,10 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
   };
  }
 
- const votes = await prisma.user.findUnique({
+ const user = await prisma.user.findUnique({
   where: { id: targetId },
   select: {
-   votedVersus: {
+   votes: {
     orderBy: { versusId: "desc" },
     take: CONFIG.MAX_VERSUS_PER_PAGE,
     skip: cursor ? 1 : undefined,
@@ -48,7 +48,7 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
          createdAt: true,
          description: true,
          status: true,
-         tags: true,
+         tags: { select: { id: true, name: true } },
          likes: reacted as Prisma.VersusLikeFindManyArgs | undefined,
          author: {
           select: { id: true, name: true, username: true, image: true, role: true },
@@ -59,7 +59,7 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
           select: {
            text: true,
            id: true,
-           votes: reacted as Prisma.VersusOptionVoteFindManyArgs | undefined,
+           votes: reacted as Prisma.VoteFindManyArgs | undefined,
            _count: { select: { votes: true } },
           },
          },
@@ -72,8 +72,22 @@ const getUserVotes: GetUserVotes = async (targetId, userId, cursor) => {
   },
  });
 
- if (!votes?.votedVersus?.[0]) return [];
- return votes.votedVersus.map((versus) => formatResponse(versus.option.versus, userId));
+ // if (!votes?.votedVersus?.[0]) return [];
+ // return votes.votedVersus.map((versus) => formatResponse(versus.option.versus, userId));
+
+ const votes = !user?.votes ? [] : user?.votes;
+ const last = votes[votes.length - 1];
+
+ return {
+  items: votes.map((versus) => formatResponse(versus.option.versus, userId)),
+  pagination: {
+   cursor:
+    votes.length < CONFIG.MAX_VERSUS_PER_PAGE ||
+    votes[0]?.option.versus.id <= CONFIG.MAX_VERSUS_PER_PAGE
+     ? null
+     : last?.option.versus.id,
+  },
+ };
 };
 
 export default getUserVotes;

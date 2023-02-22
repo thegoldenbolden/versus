@@ -1,3 +1,5 @@
+import { bebas } from "@lib/fonts";
+
 export const metadata = {
  title: "Terms & Services",
  description: "Versus Zero terms and services",
@@ -8,7 +10,7 @@ export default function Terms() {
   <div className="flex flex-col max-w-2xl gap-2 py-4 mb-8 border-2 border-transparent border-solid divide-y dark:divide-lotion-translucent sm:mb-0 sm:border-smoky-black-translucent sm:dark:border-lotion-translucent border-t-transparent border-b-transparent">
    <section className="flex flex-col gap-2 px-2 py-8">
     <div>
-     <h1 className="text-3xl font-display">Terms and Services</h1>
+     <h1 className={`${bebas.className} text-3xl`}>Terms and Services</h1>
      <div className="text-xs font-bold opacity-75">
       Last Updated: <time dateTime="2023-01-18">January 18, 2023</time>
      </div>
@@ -21,14 +23,14 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Eligibility</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Eligibility</h2>
     <p className="text-sm opacity-90">
      You must be at least 18 years old to use the Services. If you are under 18, you may
      only use the Services with the involvement and consent of a parent or guardian.
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Account Registration</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Account Registration</h2>
     <p className="text-sm opacity-90">
      To access certain features of the Services, you may need to create an account. You
      are responsible for maintaining the confidentiality of your account login information
@@ -37,7 +39,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Prohibited Conduct</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Prohibited Conduct</h2>
     <p className="text-sm opacity-90">
      You may not use the Services for any unlawful or prohibited purpose, or in any way
      that could damage, disable, overburden, or impair the Services or interfere with any
@@ -46,7 +48,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Intellectual Property</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Intellectual Property</h2>
     <p className="text-sm opacity-90">
      The Services and all content and materials included on the Services, including but
      not limited to text, graphics, logos, images, and software, are the property of
@@ -56,7 +58,9 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Disclaimer of Warranties</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>
+     Disclaimer of Warranties
+    </h2>
     <p className="text-sm opacity-90">
      {`The Services are provided on an "as is" and "as available" basis. Versus Zero makes
        no representations or warranties of any kind, express or implied, as to the
@@ -65,7 +69,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Limitation of Liability</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Limitation of Liability</h2>
     <p className="text-sm opacity-90">
      Versus Zero will not be liable for any damages of any kind arising from the use of
      the Services, including but not limited to direct, indirect, incidental, punitive,
@@ -73,7 +77,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Indemnification</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Indemnification</h2>
     <p className="text-sm opacity-90">
      You agree to indemnify and hold Versus Zero and its affiliates, officers, agents, and
      employees harmless from any claim or demand, including reasonable attorneys&apos;
@@ -82,7 +86,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Governing Law</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Governing Law</h2>
     <p className="text-sm opacity-90">
      These Terms and your use of the Services will be governed by and construed in
      accordance with the laws of the state of Tennessee, without giving effect to any
@@ -90,7 +94,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Dispute Resolution</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Dispute Resolution</h2>
     <p className="text-sm opacity-90">
      Any dispute arising out of or relating to these Terms or the Services will be
      resolved through binding arbitration in accordance with the rules of the American
@@ -98,7 +102,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Changes to the Terms</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Changes to the Terms</h2>
     <p className="text-sm opacity-90">
      Versus Zero reserves the right to change these Terms at any time. Any changes will be
      effective upon posting the revised Terms on the Services. We encourage you to review
@@ -106,7 +110,7 @@ export default function Terms() {
     </p>
    </section>
    <section className="px-2 py-8 opacity-90">
-    <h2 className="text-2xl opacity-100 font-display">Contact Us</h2>
+    <h2 className={`${bebas.className} text-2xl opacity-100`}>Contact Us</h2>
     <p className="text-sm opacity-90">
      If you have any questions or concerns about these Terms or the Services, please
      contact&nbsp;

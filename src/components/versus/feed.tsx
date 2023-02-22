@@ -1,6 +1,4 @@
 "use client";
-import type { Session } from "next-auth";
-import type { GetManyVersus, VersusQuery } from "../../types";
 import { Fragment, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -8,23 +6,19 @@ import CONFIG from "@lib/versus/config";
 import useFeed from "@hooks/use-feed";
 import useVersusMutation from "@hooks/use-versus-mutation";
 
-import CustomError from "../ui/error";
 import Versus from "../versus";
 import FallbackVersus from "../versus/fallback";
 import VersusNotFound from "../versus/not-found";
 
 import Feed from "../feed";
 import LoadMore from "../buttons/load-more";
+import Searchbar from "@components/input/searchbar";
 
-type VersusFeedProps = {
- sessionUser?: Session["user"];
- initialData?: GetManyVersus;
- searchParams?: VersusQuery;
-};
+type VersusFeedProps = { sessionUserId?: string | null };
 
-export default function VersusFeed({ sessionUser, initialData }: VersusFeedProps) {
- const { status, data, ...feed } = useFeed(initialData);
- const mutation = useVersusMutation(sessionUser);
+export default function VersusFeed({ sessionUserId }: VersusFeedProps) {
+ const mutation = useVersusMutation(sessionUserId);
+ const { status, data, ...feed } = useFeed();
  const pathname = usePathname();
 
  const [tab, setTab] = useState(0);
@@ -34,14 +28,16 @@ export default function VersusFeed({ sessionUser, initialData }: VersusFeedProps
  if (status === "loading") {
   Component = <LoadingInitial />;
  } else if (status === "error") {
-  Component = <CustomError />;
- } else if (!data?.pages[0]) {
+  throw new Error("Something happened fetching the feed");
+ } else if (!data?.pages?.[0]) {
   Component = <VersusNotFound />;
  }
 
  return (
   <>
-   <Feed.Header title={pathname?.substring(1) ?? "feed"} tab={tab} setTab={setTab} />
+   <Feed.Header title={pathname === "/home" ? "home" : null} tab={tab} setTab={setTab}>
+    {pathname == "/explore" && <Searchbar />}
+   </Feed.Header>
    <Feed.Items>
     {Component
      ? Component
@@ -49,7 +45,7 @@ export default function VersusFeed({ sessionUser, initialData }: VersusFeedProps
         return page?.items.map((versus, i) => (
          <Fragment key={versus.id}>
           <Versus
-           sessionUser={sessionUser}
+           sessionUserId={sessionUserId}
            versus={versus}
            displaySingle={displaySingle}
            mutation={mutation}
@@ -57,7 +53,7 @@ export default function VersusFeed({ sessionUser, initialData }: VersusFeedProps
          </Fragment>
         ));
        })}
-    {data?.pages[0] && (
+    {data?.pages?.[0] && (
      <LoadMore
       hasNextPage={feed.hasNextPage}
       isFetchingNextPage={feed.isFetchingNextPage}

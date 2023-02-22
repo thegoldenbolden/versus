@@ -5,9 +5,9 @@ import StickyHeader from "./sticky-header";
 const Feed: FeedType = {
  Container: (props) => {
   return (
-   <section className="relative min-h-screen ml-auto mr-auto w-screen max-w-[34rem] dark:border-lotion-translucent sm:border-solid sm:border-l sm:border-r sm:gap-4">
+   <div className="relative min-h-screen ml-auto mr-auto w-screen max-w-[34rem] dark:border-lotion-translucent sm:border-solid sm:border-l sm:border-r sm:gap-4">
     {props.children}
-   </section>
+   </div>
   );
  },
  Header: (props) => {
@@ -28,7 +28,7 @@ const Feed: FeedType = {
  },
  Items: (props) => {
   return (
-   <div className="flex flex-col items-center w-full min-h-screen divide-y divide-y-solid divide-smoky-black-translucent dark:divide-lotion-translucent">
+   <div className="relative flex flex-col items-center w-full min-h-screen divide-y divide-y-solid divide-smoky-black-translucent dark:divide-lotion-translucent">
     {props.children}
    </div>
   );
@@ -47,7 +47,7 @@ export default Feed;
 type HeaderProps = {
  tab?: number;
  setTab?: React.Dispatch<React.SetStateAction<number>>;
- title?: string;
+ title?: string | null;
 };
 
 type FeedType = {

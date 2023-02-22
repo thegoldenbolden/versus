@@ -1,3 +1,5 @@
+// TODO: stop using react icons
+
 export {
  RiDiscordFill as IDiscordFill,
  RiGoogleFill as IGoogleFill,

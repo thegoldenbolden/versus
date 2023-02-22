@@ -1,16 +1,23 @@
+"use client";
 import type { ChangeEventHandler, FormEventHandler } from "react";
+import type { Tag } from "../../types";
+import type { Session } from "next-auth";
 import { useReducer, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// prettier-ignore
-import Schemas, { Description, Options, SchemaTypes, Title } from "@lib/zod-schemas/versus";
 import { postRequest } from "@lib/make-requests";
 import CONFIG from "@lib/versus/config";
 import versusKeys from "@lib/versus/queryKeys";
+import { bebas } from "@lib/fonts";
+import Schemas, {
+ Description,
+ Options,
+ SchemaTypes,
+ Title,
+} from "@lib/zod-schemas/versus";
 
 import { ICheckmarkFill } from "../ui/icons";
 import Spinner from "../loading/spinner";
-import ErrorBoundary from "../error-boundary";
 import Preview from "../versus/preview";
 import Tabs from "../ui/tabs";
 import Accordion from "../ui/accordion";
@@ -34,7 +41,11 @@ const initial: State = {
  },
 };
 
-export default function Create(props: { user: User; closeModal: CloseModal }) {
+export default function Create(props: {
+ tags: Tag[];
+ user: Session["user"];
+ closeModal: CloseModal;
+}) {
  const [{ values, errors }, dispatch] = useReducer(reducer, initial);
  const [tab, setTab] = useState(0);
  const queryClient = useQueryClient();
@@ -89,13 +100,13 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
   dispatch({ type: "set-value", key, value });
  };
 
- const handleTagSelect = (id: number) => {
-  const key = "tags";
-  const type = "set-value";
+ const handleTagSelect = (tag: Tag) => {
+  const key = "tags",
+   type = "set-value";
   const { tags } = values;
-  const toRemove = tags.some((tagId: number) => tagId === id);
-  if (!toRemove) return dispatch({ type, key, value: [...tags, id] });
-  dispatch({ type, key, value: tags.filter((tagId: number) => tagId !== id) });
+  const toRemove = tags.some(({ id: tagId }) => tagId === tag.id);
+  if (!toRemove) return dispatch({ type, key, value: [...tags, tag] });
+  dispatch({ type, key, value: tags.filter(({ id: tagId }) => tagId !== tag.id) });
   return;
  };
 
@@ -128,7 +139,7 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
  };
 
  return (
-  <ErrorBoundary>
+  <>
    <Tabs tabs={[{ text: "Create" }, { text: "Preview" }]} tab={tab} setTab={setTab} />
    <form
     noValidate
@@ -224,8 +235,8 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
           id="tags"
           className="flex flex-wrap gap-2 p-2 border-2 border-solid rounded-md xs:grid xs:grid-cols-2 border-smoky-black-tramslucent dark:border-lotion-translucent"
          >
-          {CONFIG.TAGS.map((tag) => {
-           const active = values.tags.some((t: any) => t === tag.id);
+          {props.tags.map((tag) => {
+           const active = values.tags.some((t) => t.id === tag.id);
            const activeClass = active
             ? "border-smoky-black-translucent bg-smoky-black-translucent dark:border-lotion-translucent dark:bg-lotion-translucent"
             : "border-transparent bg-transparent focus:bg-transparent";
@@ -237,7 +248,7 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
              title={tag.name}
              type="button"
              className={`${activeClass} hover:dark:bg-lotion-translucent hover:bg-smoky-black-translucent border-solid border-2 px-2 text-sm rounded-sm items-center flex gap-2`}
-             onClick={() => handleTagSelect(tag.id)}
+             onClick={() => handleTagSelect(tag)}
              key={tag.id}
             >
              {active && <ICheckmarkFill />}
@@ -269,13 +280,13 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
       onClick={() => props.closeModal()}
       title="Back"
       aria-labelledby="close versus dialog"
-      className="flex items-center justify-center w-full py-2 rounded-sm bg-zinc-700 drop-shadow-md text-lotion font-display"
+      className={`${bebas.className} flex items-center justify-center w-full py-2 rounded-sm bg-zinc-700 drop-shadow-md text-lotion`}
      >
       Back
      </button>
      <button
       aria-disabled={mutation.isLoading || hasErrors}
-      className="flex items-center justify-center w-full py-2 transition-colors rounded-sm bg-primary dark:bg-secondary drop-shadow-md text-lotion font-display"
+      className={`${bebas.className} flex items-center justify-center w-full py-2 transition-colors rounded-sm bg-primary dark:bg-secondary drop-shadow-md text-lotion`}
       disabled={mutation.isLoading || hasErrors}
       type={mutation.isLoading ? "button" : "submit"}
      >
@@ -290,7 +301,7 @@ export default function Create(props: { user: User; closeModal: CloseModal }) {
      </button>
     </div>
    </form>
-  </ErrorBoundary>
+  </>
  );
 }
 
@@ -359,13 +370,6 @@ function reducer(state: State, action: Action): State {
  }
 }
 
-type User = {
- id: string;
- name?: string | null;
- username?: string | null;
- image?: string | null;
-};
-
 type HandleInput = ChangeEventHandler<HTMLInputElement>;
 type OptionProps = {
  error: string | null;
@@ -381,7 +385,7 @@ type StateVersusValue = {
  ["option-one"]: string;
  ["option-two"]: string;
  description: string;
- tags: number[];
+ tags: Tag[];
  nsfw: boolean;
 };
 

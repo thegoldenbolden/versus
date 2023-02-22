@@ -42,6 +42,7 @@ export default withApiHandler(async (req, versusId, userId) => {
      },
     },
    });
+   return;
   case "POST":
    const validPost = Schemas.VersusLike.parse(data);
 

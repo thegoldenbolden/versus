@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import MyAdapter from "@lib/adapter";
 
 export const options: NextAuthOptions = {
- debug: true || process.env.NODE_ENV === "development",
+ debug: process.env.NODE_ENV === "development",
  secret: process.env.NEXTAUTH_SECRET,
  pages: { signIn: "/login", signOut: "/logout", error: "/error" },
  session: {

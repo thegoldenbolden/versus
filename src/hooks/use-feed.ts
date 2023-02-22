@@ -6,26 +6,24 @@ import { getRequest } from "@lib/make-requests";
 import versusKeys from "@lib/versus/queryKeys";
 import CONFIG from "@lib/versus/config";
 
-export default function useFeed(initialData?: GetManyVersus) {
+export default function useFeed() {
  const pathname = usePathname();
  const query = useSearchParams();
  const params: VersusQuery = {};
 
  const q = query.get("q");
  const tags = query.get("tags");
- const take = query.get("take");
+ const limit = query.get("limit");
 
  if (q && pathname === "/explore") params.q = q;
  if (tags && pathname === "/explore") params.tags = tags;
- if (take) params.take = take ?? CONFIG.MAX_VERSUS_PER_PAGE;
+ if (limit) params.limit = limit ?? CONFIG.MAX_VERSUS_PER_PAGE;
 
  return useInfiniteQuery({
-  initialData: initialData ? { pageParams: [params], pages: [initialData] } : undefined,
   queryKey: versusKeys.list(params),
-  queryFn: async ({ pageParam }) => {
+  queryFn: async ({ pageParam = undefined }) => {
    if (pageParam) params.cursor = pageParam;
-   const response = await getRequest<GetManyVersus>("/api/versus", { params });
-   return response.data.ok ? response.data : null;
+   return await getRequest<GetManyVersus>("/api/versus", params);
   },
   getNextPageParam: (lastPage) => lastPage?.pagination.cursor ?? undefined,
  });

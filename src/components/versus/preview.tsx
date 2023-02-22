@@ -1,4 +1,5 @@
-import type { TAuthor } from "../../types";
+import { bebas } from "@lib/fonts";
+import type { Tag, TAuthor } from "../../types";
 import { IHeartLine } from "../ui/icons";
 import Avatar from "../user/avatar";
 import Description from "./description";
@@ -8,12 +9,12 @@ type Data = {
  author: Omit<TAuthor, "id" | "role">;
  title: string;
  options: [string, string];
- tags?: number[];
+ tags?: Tag[];
  description?: string;
 };
 
 export default function Preview({ author, title, options, tags, description }: Data) {
- const optionIds = ["Blue", "Red"];
+ const optionIds: [string, string] = ["Blue", "Red"];
  options[0] = options[0].length > 0 ? options[0] : "Blue";
  options[1] = options[1].length > 0 ? options[1] : "Red";
 
@@ -26,7 +27,7 @@ export default function Preview({ author, title, options, tags, description }: D
      <span className="truncate">{title}</span>
     </div>
    </div>
-   <div className="w-full">
+   <div className={`${bebas.className} w-full`}>
     {options.map((option, i) => (
      <div className="items-center justify-center option" key={optionIds[i]}>
       <span className="text">{option}</span>

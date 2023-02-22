@@ -1,4 +1,4 @@
-import QueryProvider from "@components/providers/query";
+import QueryProvider from "@components/providers/react-query";
 import Footer from "@components/ui/footer";
 import Sidebar from "@components/ui/sidebar";
 
