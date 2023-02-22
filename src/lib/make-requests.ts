@@ -1,7 +1,5 @@
 import type { VersusQuery } from "types";
-
-// On vercel deployments read VERCEL_URL, else NEXTAUTH_URL.
-export const baseUrl = process.env.VERCEL_URL ?? "http://localhost:3000";
+export const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
 const init: RequestInit = {
  credentials: "same-origin",
