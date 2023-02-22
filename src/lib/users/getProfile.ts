@@ -9,9 +9,9 @@ export default async function getUserProfile(id: string) {
    image: true,
    _count: {
     select: {
-     createdVersus: true,
+     versus: true,
      likedVersus: true,
-     votedVersus: true,
+     votes: true,
     },
    },
   },
@@ -23,8 +23,8 @@ export default async function getUserProfile(id: string) {
   name: user?.name,
   username: user?.username,
   image: user?.image,
-  createdVersus: user?._count.createdVersus,
+  versus: user?._count.versus,
   likedVersus: user?._count.likedVersus,
-  votedVersus: user?._count.votedVersus,
+  votes: user?._count.votes,
  };
 }

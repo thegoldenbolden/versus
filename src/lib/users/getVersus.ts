@@ -1,19 +1,20 @@
-import type { Prisma } from "@prisma/client";
-import type { Reacted } from "../versus/createResponse";
-
-import { createResponse } from "../versus/createResponse";
+import formatResponse from "../versus/formatResponse";
 import CONFIG from "../versus/config";
 import prisma from "../prisma";
 
-type GetUserVersus = (x: string, y?: string, cursor?: string | number) => Promise<any>;
+// type GetUserVersus = (x: string, y?: string, cursor?: string | number) => Promise<ReturnType<getUserVersus>>;
 
-const getUserVersus: GetUserVersus = async (targetId, userId, cursor) => {
+const getUserVersus = async (
+ targetId: string,
+ userId?: string,
+ cursor?: string | number
+) => {
  // Only use cursor if it is specified, will break 'orderBy' otherwise.
  cursor = parseInt(cursor as string);
  cursor = isNaN(cursor) ? undefined : cursor;
 
  // Find all versus the user has voted on
- let reacted: Reacted;
+ let reacted: { select: { userId: true }; where: { userId: string } } | undefined;
 
  if (userId) {
   reacted = {
@@ -22,10 +23,10 @@ const getUserVersus: GetUserVersus = async (targetId, userId, cursor) => {
   };
  }
 
- const likes = await prisma.user.findUnique({
+ const user = await prisma.user.findUnique({
   where: { id: targetId },
   select: {
-   createdVersus: {
+   versus: {
     orderBy: { id: "desc" },
     take: CONFIG.MAX_VERSUS_PER_PAGE,
     skip: cursor ? 1 : undefined,
@@ -36,8 +37,8 @@ const getUserVersus: GetUserVersus = async (targetId, userId, cursor) => {
      createdAt: true,
      description: true,
      status: true,
-     tags: true,
-     likes: reacted as Prisma.VersusLikeFindManyArgs | undefined,
+     likes: reacted,
+     tags: { select: { id: true, name: true } },
      author: {
       select: { id: true, name: true, username: true, image: true, role: true },
      },
@@ -47,7 +48,7 @@ const getUserVersus: GetUserVersus = async (targetId, userId, cursor) => {
       select: {
        text: true,
        id: true,
-       votes: reacted as Prisma.VersusOptionVoteFindManyArgs | undefined,
+       votes: reacted,
        _count: { select: { votes: true } },
       },
      },
@@ -56,8 +57,19 @@ const getUserVersus: GetUserVersus = async (targetId, userId, cursor) => {
   },
  });
 
- if (!likes?.createdVersus?.[0]) return [];
- return likes.createdVersus.map((versus) => createResponse(versus, reacted, userId));
+ const created = !user?.versus ? [] : user.versus;
+ const last = created[created.length - 1];
+
+ return {
+  items: created.map((versus) => formatResponse(versus, userId)),
+  pagination: {
+   cursor:
+    created.length < CONFIG.MAX_VERSUS_PER_PAGE ||
+    created[0]?.id <= CONFIG.MAX_VERSUS_PER_PAGE
+     ? null
+     : last?.id,
+  },
+ };
 };
 
 export default getUserVersus;

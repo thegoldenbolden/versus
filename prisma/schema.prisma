@@ -14,6 +14,12 @@ enum Role {
   MODERATOR
 }
 
+enum VersusStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("userId")
@@ -45,48 +51,49 @@ model Session {
 }
 
 model User {
-  id              String             @id @unique @default(cuid())
-  name            String?
-		username								String             @unique
-  image           String?
-  email           String?            @unique
-  emailVerified   DateTime?          @map("emailVerified")
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  role            Role               @default(USER)
-  accounts        Account[]
-  sessions        Session[]
-  likedComments   CommentLike[]
-  likedVersus     VersusLike[]
-  votedVersus     VersusOptionVote[]
-  createdVersus   Versus[]
-  createdComments Comment[]
-		followers       Follows[] @relation("following")
-		following       Follows[] @relation("follower")
+  id            String        @id @unique @default(cuid())
+  name          String?
+  username      String        @unique
+  image         String?
+  email         String?       @unique
+  emailVerified DateTime?     @map("emailVerified")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  role          Role          @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+  votes         Vote[]
+  versus        Versus[]
+  comments      Comment[]
+  followers     Follows[]     @relation("following")
+  following     Follows[]     @relation("follower")
+  likedComments CommentLike[]
+  likedVersus   VersusLike[]
 
   @@map(name: "users")
 }
 
 model Follows {
-	follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
-	following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
-	followerId String
-	followingId String
-	createdAt   DateTime  @default(now())
-	@@unique([followerId, followingId])
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
 }
 
 model Versus {
-  id          Int            @id @unique @default(autoincrement())
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  id          Int          @id @unique @default(autoincrement())
+  author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String
   title       String
-  options     VersusOption[]
+  options     Option[]
   description String?
   likes       VersusLike[]
   status      VersusStatus
   comments    Comment[]
-  tags        Int[]          @default([])
+  tags        Tag[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -95,11 +102,20 @@ model Versus {
   @@map(name: "versus")
 }
 
-model VersusOption {
-  id       String             @unique @default(cuid())
+model Tag {
+  id     Int      @id @default(autoincrement())
+  name   String
+  versus Versus[]
+
+  @@unique([id, name])
+  @@map("tags")
+}
+
+model Option {
+  id       String @unique @default(cuid())
   text     String
-  votes    VersusOptionVote[]
-  versus   Versus             @relation(fields: [versusId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+  versus   Versus @relation(fields: [versusId], references: [id], onDelete: Cascade)
   versusId Int
 
   @@unique([versusId, text])
@@ -107,11 +123,11 @@ model VersusOption {
   @@map(name: "options")
 }
 
-model VersusOptionVote {
-  option   VersusOption @relation(fields: [optionId, versusId], references: [id, versusId], onDelete: Cascade)
+model Vote {
+  option   Option @relation(fields: [optionId, versusId], references: [id, versusId], onDelete: Cascade)
   optionId String
   versusId Int
-  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
   @@unique([userId, versusId])
@@ -154,10 +170,4 @@ model CommentLike {
 
   @@unique([commentId, userId])
   @@map(name: "commentLikes")
-}
-
-enum VersusStatus {
-  PENDING
-  APPROVED
-  REJECTED
 }

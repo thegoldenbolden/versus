@@ -1,8 +1,10 @@
 import { Prisma } from "@prisma/client";
+import { ZodError } from "zod";
+
+import { Name, Username } from "@lib/zod-schemas/versus";
 import withApiHandler from "@lib/with-api-handler";
 import CustomError from "@lib/error";
-import patchUserName from "@lib/users/patchUserName";
-import { ZodError } from "zod";
+import prisma from "@lib/prisma";
 
 export default withApiHandler(async (req, versusId, sessionUserId) => {
  switch (req.method) {
@@ -14,19 +16,26 @@ export default withApiHandler(async (req, versusId, sessionUserId) => {
    if (!sessionUserId) throw new CustomError(400);
    if (!username && !name) throw new CustomError(400);
 
-   const response = await patchUserName(sessionUserId, name, username).catch((e) => e);
+   name && Name.parse(name);
+   username && Username.parse(username);
 
-   if (response instanceof Prisma.PrismaClientKnownRequestError) {
-    if (response.code === "P2002") {
-     throw new CustomError(400, "Username already exists");
-    }
-   }
+   const data = {} as { name?: string; username?: string };
+   if (name) data.name = name;
+   if (username) data.username = username;
 
-   if (response instanceof ZodError) {
-    throw new CustomError(400, response.issues?.[0]?.message);
-   }
+   const response = await prisma.user
+    .update({
+     where: { id: sessionUserId },
+     data,
+    })
+    .catch((error) => {
+     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+       throw new CustomError(400, "Username already exists");
+      }
+     }
+    });
+
    if (!response) throw response;
-
-   return { ok: true, status: 200, message: "Successfully updated username" };
  }
 });

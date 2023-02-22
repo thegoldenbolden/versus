@@ -1,8 +1,9 @@
+"use client";
 import type { PropsWithChildren } from "react";
 import type { BuiltInProviderType } from "next-auth/providers";
 import { signIn } from "next-auth/react";
 
-export function Login(props: Props) {
+export default function Login(props: Props) {
  const handleSignIn = () => {
   const callbackUrl = (window && window.location.href) || "/";
   signIn(props.provider, { callbackUrl });

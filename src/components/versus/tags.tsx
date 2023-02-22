@@ -1,20 +1,18 @@
+import type { Tag } from "types";
 import Link from "next/link";
-import CONFIG from "@lib/versus/config";
 
-export default function Tags({ tags }: { tags: number[] }) {
+export default function Tags({ tags }: { tags: Tag[] }) {
  if (!tags || tags.length === 0) return null;
  return (
   <div className="flex flex-wrap gap-2 font-bold">
    {tags.map((tag) => {
-    const t = CONFIG.TAGS.find((t) => t.id === tag);
-    if (!t) return null;
     return (
      <Link
-      href={`/explore?tags=${t.id}`}
-      key={t.id}
+      href={`/explore?tags=${tag.id}`}
+      key={tag.id}
       className="opacity-75 hover:underline focus:underline hover:opacity-100 focus:opacity-100"
      >
-      #{t.name}
+      #{tag.name}
      </Link>
     );
    })}

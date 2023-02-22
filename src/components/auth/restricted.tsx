@@ -1,4 +1,6 @@
+"use client";
 import { Dialog, Transition } from "@headlessui/react";
+import { bebas } from "@lib/fonts";
 import { Fragment } from "react";
 import Providers from "./providers";
 
@@ -32,7 +34,7 @@ export default function Restricted({ isOpen, closeModal, message }: RestrictedPr
        <Dialog.Panel className="flex flex-col w-full max-w-sm gap-4 p-6 text-center rounded-sm bg-lotion dark:bg-smoky-black text-smoky-black dark:text-lotion drop-shadow-md text-lotion md:rounded-sm backdrop-blur-md">
         <Dialog.Title
          as="h3"
-         className="w-full text-3xl jusitfy-between font-display colors-theme"
+         className={`${bebas.className} w-full text-3xl jusitfy-between colors-theme`}
         >
          Versus Zero
         </Dialog.Title>

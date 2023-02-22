@@ -10,15 +10,13 @@ const Avatar = (props: AvatarProps) => {
   return <Icon className="icon" />;
  }
 
- image.rounded ??= "rounded";
-
  return (
   <Image
    src={image.url}
    alt="avatar"
    height={image.height ?? 32}
    width={image.width ?? 32}
-   className={image.rounded}
+   className={image.rounded ?? "rounded"}
   />
  );
 };

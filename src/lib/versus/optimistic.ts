@@ -1,16 +1,26 @@
 import type { QueryClient } from "@tanstack/react-query";
+import type { Versus } from "@lib/versus/getVersus";
+import type { MutateFeed } from "../../types";
+
 import versusKeys from "./queryKeys";
+import { log } from "@lib/helpers";
+
+type OptimisicUpdates = {
+ remove: (qc: QueryClient, versusId: string) => unknown;
+ like: (qc: QueryClient, versusId: string) => unknown;
+ vote: (qc: QueryClient, versusId: string, optionId?: string) => unknown;
+};
 
 const Optimistic: OptimisicUpdates = {
  remove(qc, versusId) {
-  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+  qc.setQueriesData<MutateFeed<Versus>>(versusKeys.lists(), (previous) => {
    if (!previous) return previous;
    return {
     pageParams: previous.pageParams,
     pages: previous.pages.map((page) => {
      return {
       ...page,
-      items: page.items.filter((item) => item.id.toString() !== versusId),
+      items: page.items.filter((item) => item?.id.toString() !== versusId),
      };
     }),
    };
@@ -18,17 +28,20 @@ const Optimistic: OptimisicUpdates = {
  },
  like(qc, versusId) {
   // Update single versus in cache.
-  qc.setQueryData<Versus.Versus>(versusKeys.detail(versusId), (previous) => {
+  qc.setQueryData<Versus>(versusKeys.detail(versusId), (previous) => {
    if (!previous) return previous;
    return {
     ...previous,
     userLikes: !previous.userLikes,
-    likes: previous.likes + (previous.userLikes ? -1 : 1),
+    _count: {
+     ...previous._count,
+     likes: previous._count.likes + (previous.userLikes ? -1 : 1),
+    },
    };
   });
 
   // Update all feeds where versus is included.
-  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+  qc.setQueriesData<MutateFeed<Versus>>(versusKeys.lists(), (previous) => {
    if (!previous) return previous;
    return {
     pageParams: previous.pageParams,
@@ -36,11 +49,14 @@ const Optimistic: OptimisicUpdates = {
      return {
       ...page,
       items: page.items.map((item) => {
-       if (item.id.toString() !== versusId) return item;
+       if (item?.id.toString() !== versusId) return item;
        return {
         ...item,
         userLikes: !item.userLikes,
-        likes: item.likes + (item.userLikes ? -1 : 1),
+        _count: {
+         ...item._count,
+         likes: item._count.likes + (item.userLikes ? -1 : 1),
+        },
        };
       }),
      };
@@ -50,20 +66,20 @@ const Optimistic: OptimisicUpdates = {
  },
  vote(qc, versusId, optionId) {
   // Update single versus cache
-  qc.setQueryData<Versus.Versus>(versusKeys.detail(versusId), (previous) => {
+  qc.setQueryData<Versus>(versusKeys.detail(versusId), (previous) => {
    if (!previous) return previous;
    return {
     ...previous,
     userCanVote: false,
     options: previous.options.map((option) => {
      if (option.id !== optionId) return option;
-     return { ...option, votes: option.votes + 1 };
+     return { ...option, _count: { votes: option._count.votes + 1 } };
     }),
    };
   });
 
   // Update all feeds where versus is included.
-  qc.setQueriesData<Versus.MutateFeed<Versus.Versus>>(versusKeys.lists(), (previous) => {
+  qc.setQueriesData<MutateFeed<Versus>>(versusKeys.lists(), (previous) => {
    if (!previous) return previous;
    return {
     pageParams: previous.pageParams,
@@ -71,7 +87,7 @@ const Optimistic: OptimisicUpdates = {
      return {
       ...page,
       items: page.items.map((item) => {
-       if (item.id.toString() !== versusId) return item;
+       if (item?.id.toString() !== versusId) return item;
        return {
         ...item,
         userCanVote: false,
@@ -79,7 +95,7 @@ const Optimistic: OptimisicUpdates = {
          if (optionId !== option.id) return option;
          return {
           ...option,
-          votes: option.votes + 1,
+          _count: { votes: option._count.votes + 1 },
          };
         }),
        };
@@ -92,8 +108,3 @@ const Optimistic: OptimisicUpdates = {
 };
 
 export default Optimistic;
-type OptimisicUpdates = {
- remove: (qc: QueryClient, versusId: string) => unknown;
- like: (qc: QueryClient, versusId: string) => unknown;
- vote: (qc: QueryClient, versusId: string, optionId?: string) => unknown;
-};

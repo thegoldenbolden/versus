@@ -1,14 +1,19 @@
-import type { MutateData } from "types/mutate";
+"use client";
+import type { MutateData } from "types";
 import { IDeleteLine, IMoreLine } from "../ui/icons";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useIsMutating } from "@tanstack/react-query";
 
+type Data = {
+ userCanDelete: boolean;
+ versusId: number;
+ commentId?: string;
+};
+
 export default function More(props: MutateData<Data>) {
  const isMutating = useIsMutating();
- const { mutation, data } = props;
- const { userCanDelete, versusId, commentId } = data;
-
+ const { mutation, userCanDelete, versusId, commentId } = props;
  const opacity = mutation.isLoading ? "opacity-50" : "opacity-100";
  const handleDelete = () => mutation.mutate({ versusId, commentId, type: "remove" });
 
@@ -55,9 +60,3 @@ export default function More(props: MutateData<Data>) {
   </>
  );
 }
-
-type Data = {
- userCanDelete: boolean;
- versusId: number;
- commentId?: string;
-};

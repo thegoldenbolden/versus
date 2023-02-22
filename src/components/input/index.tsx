@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 const TextInput = forwardRef(
  (props: JSX.IntrinsicElements["input"], ref: ForwardedRef<HTMLInputElement>) => {
   const defaultClass =
-   "placeholder-smoky-black caret-smoky-black dark:caret-lotion placeholder:opacity-75 dark:placeholder-lotion hover:placeholder-opacity-100 hover:opacity-100 focus:outline-none focus-within:opacity-100 focus-within:placeholder-opacity-100";
+   "text-inherit caret-smoky-black dark:caret-lotion placeholder-inherit focus:outline-none";
   return (
    <>
     <label htmlFor={props.id} className="sr-only">

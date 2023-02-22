@@ -4,8 +4,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
  content: [
-  "./src/pages/**/*.{js,ts,jsx,tsx}",
-  "./src/layouts/**/*.{js,ts,jsx,tsx}",
+  "./src/app/**/*.{js,ts,jsx,tsx}",
   "./src/components/**/*.{js,ts,jsx,tsx}",
  ],
  theme: {
@@ -18,20 +17,9 @@ module.exports = {
     "xs": "475px",
 				...defaultTheme.screens
 			},
-			minWidth: ({ theme }) => ({
-				"full": "100%",
-				fit: "fit-content",
-				min: "min-content",
-				max: "max-content",
-				...theme("spacing")
-			}),
-			maxWidth: ({ theme }) => ({
-				"full": "100%",
-				fit: "fit-content",
-				min: "min-content",
-				max: "max-content",
-				...theme("spacing")
-			}),
+			spacing: {
+				"136": "34rem"
+			},
    colors: {
     discord: "#5865f2",
     twitter: "#1DA1F2",
