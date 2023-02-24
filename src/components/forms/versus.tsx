@@ -119,7 +119,7 @@ export default function Create(props: {
    // prettier-ignore
    description: values.description.trim().length > 0 ? values.description.trim() : undefined,
    nsfw: values.nsfw,
-   tags: values.tags,
+   tags: values.tags.map((tag) => tag.id),
    options: [values["option-one"], values["option-two"]],
    userId: props.user.id,
   });
