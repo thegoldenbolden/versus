@@ -12,7 +12,6 @@ import Vote from "../buttons/vote";
 import Header from "./header";
 import Tags from "./tags";
 import Link from "next/link";
-import getUser from "@lib/auth/get-user";
 
 type Data = {
  versus: NonNullable<Versus>;
@@ -87,7 +86,7 @@ const Versus = (props: MutateData<Data>) => {
     <div className="description">
      {versus.author.username ? (
       <Link
-       className="mr-2 font-bold hover:text-underline"
+       className="mr-2 font-bold hover:underline"
        aria-label="author profile"
        href={`/${versus.author.username}`}
       >
