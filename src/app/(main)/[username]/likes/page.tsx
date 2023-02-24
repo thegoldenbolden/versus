@@ -6,7 +6,7 @@ import getUserByUsername from "@lib/users/getUserByUsername";
 import getUser from "@lib/auth/get-user";
 import VersusFeed from "../feed";
 
-export const metadata: Metadata = { title: "Votes" };
+export const metadata: Metadata = { title: "Likes" };
 
 export default async function UserVotes({ params }: ProfileProps) {
  const sessionUser = await getUser();
