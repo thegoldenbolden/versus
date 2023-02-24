@@ -1,4 +1,5 @@
 import type { GetManyVersus, VersusQuery } from "../types";
+import type { ReadonlyURLSearchParams } from "next/navigation";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -8,7 +9,7 @@ import CONFIG from "@lib/versus/config";
 
 export default function useFeed() {
  const pathname = usePathname();
- const query = useSearchParams();
+ const query = useSearchParams() as ReadonlyURLSearchParams;
  const params: VersusQuery = {};
 
  const q = query.get("q");
