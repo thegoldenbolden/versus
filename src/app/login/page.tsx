@@ -15,7 +15,7 @@ export default async function Login() {
  }
 
  return (
-  <div className="grid place-items-center h-screen">
+  <div className="grid place-content-center h-screen">
    <div className="flex flex-col items-center justify-between max-w-screen w-136">
     <h2 className={`${bebas.className} text-4xl`}>Versus Zero</h2>
     <Providers />

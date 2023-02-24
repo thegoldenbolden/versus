@@ -16,7 +16,7 @@ export default async function Logout() {
  }
 
  return (
-  <div className="grid h-screen place-items-center">
+  <div className="grid h-screen place-content-center">
    <div className="flex flex-col items-center justify-between w-64">
     <h2 className={`${bebas.className} text-4xl`}>Versus Zero</h2>
     <div className="flex flex-col items-center w-full gap-2">
