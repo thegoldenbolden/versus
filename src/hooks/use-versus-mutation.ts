@@ -38,7 +38,6 @@ export default function useVersusMutation(
     case "remove":
      if (!sessionUserId) throw new CustomError(401);
      return await deleteRequest<SchemaTypes["DeleteVersusOrComment"]>(versusUrl);
-     return;
     case "like":
      if (!sessionUserId) throw new CustomError(401);
      const likeUrl = versusUrl + "/likes";
@@ -97,7 +96,7 @@ export default function useVersusMutation(
      redirect && redirect();
      break;
     case "like":
-     queryClient.invalidateQueries(versusKeys.detail(`${versusId}`));
+     // queryClient.invalidateQueries(versusKeys.detail(`${versusId}`));
      queryClient.invalidateQueries(versusKeys.list({ type: "likes" }));
      break;
    }
