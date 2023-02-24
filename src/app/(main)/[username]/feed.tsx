@@ -8,6 +8,7 @@ import useProfileFeed from "@hooks/use-profile-feed";
 import Versus from "@components/versus";
 import LoadMore from "@components/buttons/load-more";
 import StickyHeader from "@components/feed/sticky-header";
+import Feed from "@components/feed";
 import {
  IGridFill,
  IGridLine,
@@ -16,7 +17,6 @@ import {
  IThumbUpFill,
  IThumbUpLine,
 } from "@components/ui/icons";
-import Feed from "@components/feed";
 
 type FeedProps = {
  profileId: string;
