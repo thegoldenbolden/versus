@@ -52,7 +52,5 @@ export function getRelativeTimeString(date: Date | string | number, lang: string
   style: "long",
  });
 
- let value = deltaSeconds / divisor;
- value = value < 0 ? value + 1 : value;
- return rtf.format(Math.floor(value), units[unitIndex]);
+ return rtf.format(-Math.floor(Math.abs(deltaSeconds / divisor)), units[unitIndex]);
 }
