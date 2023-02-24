@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -6,9 +7,7 @@ import getUser from "@lib/auth/get-user";
 import ProfileForm from "./profile-form";
 import Feed from "@components/feed";
 
-export const metadata = {
- title: "Your settings",
-};
+export const metadata: Metadata = { title: "Your settings" };
 
 export default async function Settings() {
  const user = await getUser();

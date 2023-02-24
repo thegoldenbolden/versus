@@ -1,11 +1,10 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import getUser from "@lib/auth/get-user";
 import Providers from "@components/auth/providers";
 import { bebas } from "@lib/fonts";
 
-export const metadata = {
- title: "Login",
-};
+export const metadata: Metadata = { title: "Login" };
 
 export default async function Login() {
  const user = await getUser();

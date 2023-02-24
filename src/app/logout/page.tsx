@@ -1,12 +1,11 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import LogoutButton from "@components/auth/logout";
 import getUser from "@lib/auth/get-user";
 import { bebas } from "@lib/fonts";
 
-export const metadata = {
- title: "Logout",
-};
+export const metadata: Metadata = { title: "Logout" };
 
 export default async function Logout() {
  const user = await getUser();

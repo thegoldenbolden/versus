@@ -1,6 +1,7 @@
+import type { Metadata } from "next";
 import { bebas } from "@lib/fonts";
 
-export const metadata = {
+export const metadata: Metadata = {
  title: "Privacy Policy",
  description: "Versus Zero privacy policy",
 };

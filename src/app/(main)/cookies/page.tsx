@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { bebas } from "@lib/fonts";
+
+export const metadata: Metadata = { title: "Cookie Policy" };
 
 export default function Cookies() {
  return (

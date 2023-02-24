@@ -7,6 +7,12 @@ export const metadata = {
   default: "Versus Zero",
   template: "VS | %s",
  },
+ icons: {
+  icon: "/favicon-32x32.png",
+  shortcut: "/android-chrome-192x192.png",
+  apple: "/apple-touch-icon.png",
+ },
+ manifest: "https://versuszero.vercel.app/manifest.json",
 };
 
 function preload() {

@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from "react";
 import type { ProfileProps } from "types";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import getUser from "@lib/auth/get-user";
@@ -12,14 +13,22 @@ import Feed from "@components/feed";
 
 type Props = ProfileProps & PropsWithChildren;
 
-// TODO: Generate Metadata
+export async function generateMetadata({ params }: ProfileProps): Promise<Metadata> {
+ const sessionUser = await getUser();
+ const user = await getUserByUsername(params.username, sessionUser?.id);
 
-export const metadata = {
- title: {
-  default: "Profile",
-  template: "Profile | %s",
- },
-};
+ if (!user) return { title: "User Not Found" };
+
+ const title =
+  user?.name && user?.username ? `${user.name} (@${user.username})` : "Profile";
+
+ return {
+  title: {
+   default: title,
+   template: `%s | ${title}`,
+  },
+ };
+}
 
 export default async function ProfileLayout({ children, params }: Props) {
  const sessionUser = await getUser();

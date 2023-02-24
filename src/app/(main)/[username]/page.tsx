@@ -5,10 +5,6 @@ import getUserByUsername from "@lib/users/getUserByUsername";
 import getUser from "@lib/auth/get-user";
 import VersusFeed from "./feed";
 
-export const metadata = {
- title: "Versus",
-};
-
 export default async function UserVersus({ params }: ProfileProps) {
  const sessionUser = await getUser();
  const profile = (await getUserByUsername(
